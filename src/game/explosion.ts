@@ -1,4 +1,4 @@
-import { Content } from "../content";
+import { Content } from "../core/content";
 import { Rect } from "../rect";
 import { SpriteRenderer } from "../sprite-renderer";
 

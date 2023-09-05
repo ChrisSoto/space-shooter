@@ -1,5 +1,5 @@
 import { vec2 } from "gl-matrix";
-import { Content } from "../content";
+import { Content } from "../core/content";
 import { Rect } from "../rect";
 import { SpriteRenderer } from "../sprite-renderer";
 import { Texture } from "../texture";

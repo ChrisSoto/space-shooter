@@ -2,7 +2,7 @@ import { vec2 } from "gl-matrix";
 import { Rect } from "../rect";
 import { Texture } from "../texture";
 import { InputManager } from "../input-manager";
-import { Content } from "../content";
+import { Content } from "../core/content";
 import { SpriteRenderer } from "../sprite-renderer";
 
 const SPEED = 0.25;

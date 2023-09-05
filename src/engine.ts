@@ -1,6 +1,6 @@
 
 import { vec2 } from "gl-matrix";
-import { Content } from "./content";
+import { Content } from "./core/content";
 import { InputManager } from "./input-manager";
 import { SpriteRenderer } from "./sprite-renderer";
 
