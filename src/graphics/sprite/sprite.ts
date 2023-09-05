@@ -1,4 +1,4 @@
-import { Rect } from "./rect";
+import { Rect } from "../rect";
 import { Texture } from "./texture";
 
 export class Sprite {

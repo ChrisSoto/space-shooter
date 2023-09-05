@@ -1,9 +1,9 @@
 import { vec2 } from "gl-matrix";
-import { Rect } from "../rect";
-import { Texture } from "../texture";
-import { InputManager } from "../input-manager";
+import { Rect } from "../graphics/rect";
+import { Texture } from "../graphics/sprite/texture";
+import { InputManager } from "../core/input-manager";
 import { Content } from "../core/content";
-import { SpriteRenderer } from "../sprite-renderer";
+import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 
 const SPEED = 0.25;
 

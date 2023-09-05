@@ -1,4 +1,4 @@
-import { Engine } from "./engine";
+import { Engine } from "./core/engine";
 import { Background } from "./game/background";
 import { BulletManager } from "./game/bullet-manager";
 import { EnemyManager } from "./game/enemy-manager";

@@ -1,5 +1,5 @@
-import { Rect } from "../rect";
-import { SpriteRenderer } from "../sprite-renderer";
+import { Rect } from "../graphics/rect";
+import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 
 export interface Enemy {
   active: boolean;

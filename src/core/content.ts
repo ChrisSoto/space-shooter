@@ -1,6 +1,6 @@
-import { Rect } from "../rect";
-import { Sprite } from "../sprite";
-import { Texture } from "../texture";
+import { Rect } from "../graphics/rect";
+import { Sprite } from "../graphics/sprite/sprite";
+import { Texture } from "../graphics/sprite/texture";
 
 export class Content {
   private static spriteSheet: Texture;

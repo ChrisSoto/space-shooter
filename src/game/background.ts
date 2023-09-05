@@ -1,6 +1,6 @@
 import { Content } from "../core/content";
-import { Rect } from "../rect";
-import { SpriteRenderer } from "../sprite-renderer";
+import { Rect } from "../graphics/rect";
+import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 
 const BACKGROUND_SCROLL_SPEED = 0.25;
 

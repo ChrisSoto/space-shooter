@@ -1,11 +1,11 @@
 import vertexShaderSource from "./shaders/vshader.glsl?raw";
 import fragmentShaderSource from "./shaders/fshader.glsl?raw";
-import { Camera } from "./camera";
-import { ProgramUtil } from "./program-util";
-import { BufferUtil } from "./buffer-util";
+import { Camera } from "../../camera/camera";
+import { ProgramUtil } from "../program-util";
+import { BufferUtil } from "../buffer-util";
 import { Texture } from "./texture";
-import { Rect } from "./rect";
-import { Color } from "./color";
+import { Rect } from "../rect";
+import { Color } from "../color";
 import { vec2 } from "gl-matrix";
 
 const MAX_NUMBER_OF_SPRITES = 2000;

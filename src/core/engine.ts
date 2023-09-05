@@ -1,8 +1,8 @@
 
 import { vec2 } from "gl-matrix";
-import { Content } from "./core/content";
+import { Content } from "./content";
 import { InputManager } from "./input-manager";
-import { SpriteRenderer } from "./sprite-renderer";
+import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 
 export class Engine {
   private canvas!: HTMLCanvasElement;

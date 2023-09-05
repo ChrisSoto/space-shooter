@@ -1,4 +1,4 @@
-import { SpriteRenderer } from "../sprite-renderer";
+import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 import { BulletManager } from "./bullet-manager";
 import { Enemy } from "./enemy";
 import { ExplosionManager } from "./explosion-manager";

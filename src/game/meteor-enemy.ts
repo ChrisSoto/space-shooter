@@ -1,8 +1,8 @@
 import { vec2 } from "gl-matrix";
 import { Content } from "../core/content";
-import { Rect } from "../rect";
-import { SpriteRenderer } from "../sprite-renderer";
-import { Texture } from "../texture";
+import { Rect } from "../graphics/rect";
+import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
+import { Texture } from "../graphics/sprite/texture";
 import { Enemy } from "./enemy";
 
 

@@ -1,6 +1,6 @@
 import { Content } from "../core/content";
-import { Rect } from "../rect";
-import { SpriteRenderer } from "../sprite-renderer";
+import { Rect } from "../graphics/rect";
+import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 
 const TIME_TO_NEXT_FRAME = 1000 / 30;
 
