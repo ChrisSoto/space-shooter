@@ -1,5 +1,5 @@
-import vertexShaderSource from "./shaders/vshader.glsl?raw";
-import fragmentShaderSource from "./shaders/fshader.glsl?raw";
+import vertexShaderSource from "../shaders/vshader.glsl?raw";
+import fragmentShaderSource from "../shaders/fshader.glsl?raw";
 import { Camera } from "../../camera/camera";
 import { ProgramUtil } from "../program-util";
 import { BufferUtil } from "../buffer-util";
