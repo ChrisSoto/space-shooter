@@ -7,14 +7,10 @@ export class Content {
 
   public static sprites: { [id: string]: Sprite } = {};
   public static testUVTexture: Texture;
-  public static backgroundTexture: Texture;
-  public static explosionTexture: Texture;
 
   public static async initialize(gl: WebGL2RenderingContext) {
     this.spriteSheet = await Texture.loadTexture(gl, "assets/Spritesheet/sheet.png");
     this.testUVTexture = await Texture.loadTexture(gl, "assets/uvTexture.png")
-    this.backgroundTexture = await Texture.loadTexture(gl, "assets/Backgrounds/purple.png");
-    this.explosionTexture = await Texture.loadTexture(gl, "assets/explosion.png")
 
     await this.loadSpriteSheet();
   }
@@ -25,6 +21,7 @@ export class Content {
 
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, "text/xml");
+
     xmlDoc.querySelectorAll("SubTexture")
       .forEach((texture) => {
         const name = texture.getAttribute("name")!.replace(".png", "");

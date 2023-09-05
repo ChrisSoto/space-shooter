@@ -1,5 +1,5 @@
-import { Rect } from "../graphics/rect";
-import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
+import { Rect } from "../Dinkum/graphics/rect";
+import { SpriteRenderer } from "../Dinkum/graphics/sprite/sprite-renderer";
 
 export interface Enemy {
   active: boolean;

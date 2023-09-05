@@ -1,7 +1,7 @@
-import { Content } from "../core/content";
-import { Rect } from "../graphics/rect";
-import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
-import { Texture } from "../graphics/sprite/texture";
+import { Content } from "../Dinkum/core/content";
+import { Rect } from "../Dinkum/graphics/rect";
+import { SpriteRenderer } from "../Dinkum/graphics/sprite/sprite-renderer";
+import { Texture } from "../Dinkum/graphics/sprite/texture";
 import { Player } from "./player";
 
 const BULLET_SPEED = 0.75;

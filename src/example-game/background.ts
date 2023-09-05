@@ -1,6 +1,6 @@
-import { Content } from "../core/content";
-import { Rect } from "../graphics/rect";
-import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
+import { Content } from "../Dinkum/core/content";
+import { Rect } from "../Dinkum/graphics/rect";
+import { SpriteRenderer } from "../Dinkum/graphics/sprite/sprite-renderer";
 
 const BACKGROUND_SCROLL_SPEED = 0.25;
 

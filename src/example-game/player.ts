@@ -1,9 +1,9 @@
 import { vec2 } from "gl-matrix";
-import { Rect } from "../graphics/rect";
-import { Texture } from "../graphics/sprite/texture";
-import { InputManager } from "../core/input-manager";
-import { Content } from "../core/content";
-import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
+import { Rect } from "../Dinkum/graphics/rect";
+import { Texture } from "../Dinkum/graphics/sprite/texture";
+import { InputManager } from "../Dinkum/core/input-manager";
+import { Content } from "../Dinkum/core/content";
+import { SpriteRenderer } from "../Dinkum/graphics/sprite/sprite-renderer";
 
 const SPEED = 0.25;
 
