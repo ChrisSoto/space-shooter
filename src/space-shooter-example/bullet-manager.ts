@@ -1,4 +1,5 @@
-import { SpriteRenderer } from "../Dinkum/graphics/sprite/sprite-renderer";
+
+import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
 import { Bullet } from "./bullet";
 import { Enemy } from "./enemy";
 import { Player } from "./player";

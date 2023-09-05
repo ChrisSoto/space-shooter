@@ -5,8 +5,10 @@ import { InputManager } from "./input-manager";
 import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 
 export class Engine {
+  // private canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
+  // public gl: WebGL2RenderingContext = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
   private canvas!: HTMLCanvasElement;
-  private gl!: WebGL2RenderingContext;
+  public gl!: WebGL2RenderingContext;
   private lastTime = 0;
 
   public spriteRenderer!: SpriteRenderer;
@@ -17,18 +19,22 @@ export class Engine {
   public onUpdate = (dt: number) => { };
   public onDraw = () => { };
 
-  constructor() { }
-
-  public async initialize() {
+  constructor() {
     this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
     this.gl = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
+  }
+
+  public async initialize() {
+    // this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    // this.gl = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
+    // this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
     this.inputManager.initialize();
 
     this.clientBounds[0] = this.canvas.width;
     this.clientBounds[1] = this.canvas.height;
 
-    await Content.initialize(this.gl);
+    // await Content.initialize(this.gl);
 
     this.spriteRenderer = new SpriteRenderer(this.gl, this.canvas.width, this.canvas.height);
     await this.spriteRenderer.initialize();

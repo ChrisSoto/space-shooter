@@ -1,4 +1,4 @@
-import { SpriteRenderer } from "../Dinkum/graphics/sprite/sprite-renderer";
+import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
 import { BulletManager } from "./bullet-manager";
 import { Enemy } from "./enemy";
 import { ExplosionManager } from "./explosion-manager";
@@ -17,8 +17,8 @@ export class EnemyManager {
     private width: number,
     private height: number,
     private player: Player,
-    private explosionManager: ExplosionManager,
-    private bulletManager: BulletManager) {
+    private explosionManager?: ExplosionManager,
+    private bulletManager?: BulletManager) {
   }
 
   private spawnEnemy() {
@@ -45,16 +45,16 @@ export class EnemyManager {
       if (enemy.active) {
         enemy.update(dt);
 
-        // enemy bullet collision
-        if (this.bulletManager.intersectsEnemy(enemy)) {
-          enemy.active = false;
-          this.explosionManager.create(enemy.drawRect);
-        }
+        // // enemy bullet collision
+        // if (this.bulletManager.intersectsEnemy(enemy)) {
+        //   enemy.active = false;
+        //   this.explosionManager.create(enemy.drawRect);
+        // }
 
         // enemy player collision
         if (enemy.drawRect.intersects(this.player.drawRect)) {
           enemy.active = false;
-          this.explosionManager.create(enemy.drawRect);
+          // this.explosionManager.create(enemy.drawRect);
         }
 
         // enemy out of screen

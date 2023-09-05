@@ -1,9 +1,9 @@
 import { vec2 } from "gl-matrix";
-import { Rect } from "../Dinkum/graphics/rect";
-import { Texture } from "../Dinkum/graphics/sprite/texture";
-import { InputManager } from "../Dinkum/core/input-manager";
-import { Content } from "../Dinkum/core/content";
-import { SpriteRenderer } from "../Dinkum/graphics/sprite/sprite-renderer";
+import { Rect } from "../dinkum/graphics/rect";
+import { Texture } from "../dinkum/graphics/sprite/texture";
+import { InputManager } from "../dinkum/core/input-manager";
+import { Content } from "../dinkum/core/content";
+import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
 
 const SPEED = 0.25;
 
@@ -14,7 +14,7 @@ export class Player {
   private texture: Texture;
 
   constructor(private inputManager: InputManager, private width: number, private height: number) {
-    const playerSprite = Content.sprites["playerShip1_blue"];
+    const playerSprite = Content.sprites["playerShip2_red"];
     this.texture = playerSprite.texture;
     this.drawRect = playerSprite.drawRect.copy();
     this.sourceRect = playerSprite.sourceRect.copy();

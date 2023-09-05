@@ -1,6 +1,6 @@
-import { Content } from "../Dinkum/core/content";
-import { Rect } from "../Dinkum/graphics/rect";
-import { SpriteRenderer } from "../Dinkum/graphics/sprite/sprite-renderer";
+import { Content } from "../dinkum/core/content";
+import { Rect } from "../dinkum/graphics/rect";
+import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
 
 const TIME_TO_NEXT_FRAME = 1000 / 30;
 

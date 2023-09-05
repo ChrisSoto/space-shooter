@@ -1,5 +1,5 @@
-import { Rect } from "../Dinkum/graphics/rect";
-import { SpriteRenderer } from "../Dinkum/graphics/sprite/sprite-renderer";
+import { Rect } from "../dinkum/graphics/rect";
+import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
 import { Explosion } from "./explosion";
 
 export class ExplosionManager {
