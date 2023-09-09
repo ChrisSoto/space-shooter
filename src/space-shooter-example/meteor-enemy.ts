@@ -54,7 +54,7 @@ export class MeteorEnemy implements Enemy {
   }
 
   draw(spriteRenderer: SpriteRenderer): void {
-    spriteRenderer.drawSpriteSource(this.texture, this.drawRect, this.sourceRect, undefined,
+    spriteRenderer.drawSprite(this.texture, this.drawRect, this.sourceRect, undefined,
       this.rotation, this.rotationOrigin);
   }
 }

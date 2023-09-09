@@ -56,6 +56,6 @@ export class Player {
   }
 
   public draw(spriteRenderer: SpriteRenderer) {
-    spriteRenderer.drawSpriteSource(this.texture, this.drawRect, this.sourceRect);
+    spriteRenderer.drawSprite(this.texture, this.drawRect, this.sourceRect);
   }
 }

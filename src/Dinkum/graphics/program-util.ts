@@ -6,7 +6,7 @@ export class ProgramUtil {
  * @param fragmentShader - fragment shader
  * @returns {WebGLProgram}
  */
-  public static createProgram(gl: WebGL2RenderingContext, vertexShader: WebGLShader, fragmentShader: WebGLShader): WebGLProgram {
+  public static createProgram(gl: WebGL2RenderingContext, vertexShader: WebGLShader, fragmentShader: WebGLShader): WebGLProgram | undefined {
     const program = gl.createProgram()!;
 
     gl.attachShader(program, vertexShader);
@@ -14,12 +14,12 @@ export class ProgramUtil {
     gl.linkProgram(program);
 
     const linked = gl.getProgramParameter(program, gl.LINK_STATUS)
-    if (!linked) {
-      console.error(`Shader program failed to load: ${gl.getProgramInfoLog(program)}`);
-      gl.deleteProgram(program);
+    if (linked) {
+      return program;
     }
 
-    return program;
+    console.error(`Shader program failed to load: ${gl.getProgramInfoLog(program)}`);
+    gl.deleteProgram(program);
   }
 
   /**
@@ -28,16 +28,17 @@ export class ProgramUtil {
    * @param shaderSource - shader source code
    * @returns {WebGLShader}
    */
-  public static createShader(gl: WebGL2RenderingContext, type: number, shaderSource: string): WebGLShader {
+  public static createShader(gl: WebGL2RenderingContext, type: number, shaderSource: string): WebGLShader | undefined {
     const shader = gl.createShader(type)!;
     gl.shaderSource(shader, shaderSource);
     gl.compileShader(shader);
 
     const compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-    if (!compiled) {
-      console.error(`Shader failed to compile: ${gl.getShaderInfoLog(shader)}`);
-      gl.deleteShader(shader);
+    if (compiled) {
+      return shader;
     }
-    return shader;
+
+    console.error(`Shader failed to compile: ${gl.getShaderInfoLog(shader)}`);
+    gl.deleteShader(shader);
   }
 }

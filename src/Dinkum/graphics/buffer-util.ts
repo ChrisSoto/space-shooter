@@ -14,6 +14,11 @@ export class BufferUtil {
     return buffer;
   }
 
+  /**
+   * creates buffer to store data to gpu
+   * @param data 
+   * @returns {WebGLBuffer}
+   */
   public static createIndexBuffer(gl: WebGL2RenderingContext, data: Uint8Array | Uint16Array | Uint32Array): WebGLBuffer {
     const buffer = gl.createBuffer()!;
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
