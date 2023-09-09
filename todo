@@ -1,0 +1,4 @@
+[ ] get space-shooter back to working order by making it possible to setup textures before game starts
+[ ] maybe use texture loading as a setup screen
+[ ] setup observable modal system for event notifications
+[ ] engine should have inputs like batching process

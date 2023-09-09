@@ -9,6 +9,7 @@ import { Player } from "./player";
 const engine = new Engine();
 
 await Content.uploadSpriteSheet(engine.gl, "main", "assets/Spritesheet/sheet.png");
+// await Content.uploadSprite(engine.gl, "background", "assets/Backgrounds/purple.png")
 
 engine.initialize()
   .then(() => {

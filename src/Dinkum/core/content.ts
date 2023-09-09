@@ -18,13 +18,13 @@ export class Content {
   public static async initialize(gl: WebGL2RenderingContext) {
     this.spriteSheet = await Texture.loadTexture(gl, "assets/Spritesheet/sheet.png");
     this.testUVTexture = await Texture.loadTexture(gl, "assets/uvTexture.png")
-    this.backgroundTexture = await Texture.loadTexture(gl, "assets/Backgrounds/purple.png");
+    // this.backgroundTexture = await Texture.loadTexture(gl, "assets/Backgrounds/purple.png");
     this.explosionTexture = await Texture.loadTexture(gl, "assets/explosion.png")
 
     // await this.loadSpriteSheet();
   }
 
-  public static uploadSprite() { }
+  public static async uploadSprite() { }
 
   /**
    *  uploadSpriteSheet
