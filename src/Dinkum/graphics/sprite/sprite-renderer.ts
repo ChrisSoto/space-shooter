@@ -8,7 +8,7 @@ import { Rect } from "../rect";
 import { Color } from "../color";
 import { vec2 } from "gl-matrix";
 
-const MAX_NUMBER_OF_SPRITES = 2000;
+const MAX_NUMBER_OF_SPRITES = 1000;
 const FLOATS_PER_VERTEX = 7;
 const FLOATS_PER_SPRITE = 4 * FLOATS_PER_VERTEX;
 const INDEX_PER_SPRITE = 6;
@@ -38,7 +38,7 @@ export class SpriteRenderer {
     private width: number,
     private height: number) { }
 
-  private setupIndexbuffer() {
+  private setupIndexbufferData() {
 
     const data = new Uint16Array(MAX_NUMBER_OF_SPRITES * INDEX_PER_SPRITE);
 
@@ -53,16 +53,17 @@ export class SpriteRenderer {
       data[i * INDEX_PER_SPRITE + 5] = i * 4 + 3;
     }
 
-    this.indexBuffer = BufferUtil.createIndexBuffer(this.gl, data);
+    return data;
   }
 
   public async initialize() {
 
     this.camera = new Camera(this.width, this.height);
 
+    console.log('create shaders');
     const vertexShader = ProgramUtil.createShader(this.gl, this.gl.VERTEX_SHADER, vertexShaderSource)!;
     const fragmentShader = ProgramUtil.createShader(this.gl, this.gl.FRAGMENT_SHADER, fragmentShaderSource)!;
-
+    console.log('create program');
     this.program = ProgramUtil.createProgram(this.gl, vertexShader, fragmentShader)!;
     this.projectionViewMatrixLocation = this.gl.getUniformLocation(this.program, "projectionViewMatrix")!;
 
@@ -99,7 +100,12 @@ export class SpriteRenderer {
     this.gl.enableVertexAttribArray(2);
 
 
-    this.setupIndexbuffer();
+    //
+    // index buffer
+    //
+
+    console.log('create index buffer');
+    this.indexBuffer = BufferUtil.createIndexBuffer(this.gl, this.setupIndexbufferData());
 
     this.camera.update();
     this.gl.enable(this.gl.BLEND);
@@ -206,13 +212,15 @@ export class SpriteRenderer {
 
     this.instanceCount++;
 
+    //console.log('instance count', this.instanceCount)
+
     if (this.instanceCount >= MAX_NUMBER_OF_SPRITES) {
       this.end();
     }
   }
 
   public begin() {
-    this.instanceCount = 0;
+    // this.instanceCount = 0;
     // this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
   }
