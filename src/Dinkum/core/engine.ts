@@ -7,7 +7,6 @@ import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 export class Engine {
   // private canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
   // public gl: WebGL2RenderingContext = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
-  private canvas!: HTMLCanvasElement;
   public gl!: WebGL2RenderingContext;
   private lastTime = 0;
 
@@ -19,10 +18,10 @@ export class Engine {
   public onUpdate = (dt: number) => { };
   public onDraw = () => { };
 
-  constructor() {
-    this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
+  constructor(private canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
     this.gl = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
-    console.log(this.gl);
+    console.log('init webGL', this.gl);
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
   }
 
