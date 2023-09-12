@@ -8,23 +8,27 @@ export interface SpriteSheetData {
 }
 
 export class Content {
-  private static spriteSheet: Texture;
   private static spriteSheets: { [id: string]: SpriteSheetData } = {};
   public static sprites: { [id: string]: Sprite } = {};
   public static testUVTexture: Texture;
-  public static backgroundTexture: Texture;
-  public static explosionTexture: Texture;
 
   public static async initialize(gl: WebGL2RenderingContext) {
-    this.spriteSheet = await Texture.loadTexture(gl, "assets/Spritesheet/sheet.png");
     this.testUVTexture = await Texture.loadTexture(gl, "assets/uvTexture.png")
     // this.backgroundTexture = await Texture.loadTexture(gl, "assets/Backgrounds/purple.png");
-    this.explosionTexture = await Texture.loadTexture(gl, "assets/explosion.png")
+    // this.explosionTexture = await Texture.loadTexture(gl, "assets/explosion.png")
 
     // await this.loadSpriteSheet();
   }
 
-  public static async uploadSprite() { }
+  public static async uploadSprite(gl: WebGL2RenderingContext, key: string, url: string) {
+    const texture = await Texture.loadTexture(gl, url);
+    const width = texture.width;
+    const height = texture.height;
+    const drawRect = new Rect(0, 0, width, height);
+    const srcRect = new Rect(0, 0, width, height);
+
+    this.sprites[key] = new Sprite(texture, drawRect, srcRect);
+  }
 
   /**
    *  uploadSpriteSheet
@@ -41,22 +45,10 @@ export class Content {
 
     console.log('Uploaded Sprite Sheet: ', this.spriteSheets[name]);
 
-    this.loadSprites(name);
+    this.loadSpritesToSpritesheet(name);
   }
 
-  private static async loadXmlDoc(xmlUrl: string): Promise<Document> {
-    const url = xmlUrl.replace('png', 'xml');
-    const xmlReq = await fetch(url);
-    const xml = await xmlReq.text();
-    const parser = new DOMParser();
-
-    return new Promise<Document>((resolve, reject) => {
-      resolve(parser.parseFromString(xml, "text/xml"));
-      reject('Error')
-    });
-  }
-
-  private static loadSprites(spriteSheetName: string) {
+  private static loadSpritesToSpritesheet(spriteSheetName: string) {
     const spritesheet = this.spriteSheets[spriteSheetName];
     spritesheet.xmlDoc.querySelectorAll("SubTexture")
       .forEach((texture) => {
@@ -71,6 +63,18 @@ export class Content {
 
         this.sprites[name] = new Sprite(spritesheet.texture, drawRect, srcRect);
       });
+  }
+
+  private static async loadXmlDoc(xmlUrl: string): Promise<Document> {
+    const url = xmlUrl.replace('png', 'xml');
+    const xmlReq = await fetch(url);
+    const xml = await xmlReq.text();
+    const parser = new DOMParser();
+
+    return new Promise<Document>((resolve, reject) => {
+      resolve(parser.parseFromString(xml, "text/xml"));
+      reject('Error')
+    });
   }
 
   // private static async loadSpriteSheet() {

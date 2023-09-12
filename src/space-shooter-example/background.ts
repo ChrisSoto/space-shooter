@@ -2,14 +2,15 @@ import { Content } from "../dinkum/core/content";
 import { Rect } from "../dinkum/graphics/rect";
 import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
 
-const BACKGROUND_SCROLL_SPEED = 0.25;
+const BACKGROUND_SCROLL_SPEED = 0.15;
 
 export class Background {
   private drawRect: Rect;
   private drawRect2: Rect;
+  private key: string = "background";
   constructor(private width: number, private height: number) {
-    this.drawRect = new Rect(0, 0, width, height);
-    this.drawRect2 = new Rect(0, 0, width, height);
+    this.drawRect = new Rect(0, 0, this.width, this.height);
+    this.drawRect2 = new Rect(0, 0, this.width, this.height);
   }
 
   public update(dt: number) {
@@ -23,8 +24,8 @@ export class Background {
   }
 
   public draw(spriteRenderer: SpriteRenderer) {
-    spriteRenderer.drawSprite(Content.backgroundTexture, this.drawRect);
-    spriteRenderer.drawSprite(Content.backgroundTexture, this.drawRect2);
+    spriteRenderer.drawSprite(Content.sprites[this.key].texture, this.drawRect);
+    spriteRenderer.drawSprite(Content.sprites[this.key].texture, this.drawRect2);
   }
 
 }
