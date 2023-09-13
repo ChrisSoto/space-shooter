@@ -6,7 +6,7 @@
  */
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-import { vec4 } from "gl-matrix";
+import { mat4, vec4 } from "gl-matrix";
 import * as glSys from "./core/gl.js";
 import * as vertexBuffer from "./core/vertex_buffer";
 
@@ -16,6 +16,9 @@ class SimpleShader {
   mPixelColorRef: WebGLUniformLocation | null;
   mVertexShader: WebGLShader | null = null;
   mFragmentShader: WebGLShader | null = null;
+  mModelMatrixRef: WebGLUniformLocation | null;
+  mCameraMatrixRef: WebGLUniformLocation | null;
+
   // constructor of SimpleShader object
   constructor(vertexShaderSource: string, fragmentShaderSource: string) {
     // instance variables
@@ -23,6 +26,8 @@ class SimpleShader {
     this.mCompiledShader = null;  // reference to the compiled shader in webgl context  
     this.mVertexPositionRef = null; // reference to VertexPosition within the shader
     this.mPixelColorRef = null;     // reference to the pixelColor uniform in the fragment shader
+    this.mModelMatrixRef = null;
+    this.mCameraMatrixRef = null;
 
     let gl = glSys.get();
 
@@ -51,13 +56,15 @@ class SimpleShader {
 
         // Step E: Gets a reference to the uniform variable in the fragment shader
         this.mPixelColorRef = gl.getUniformLocation(this.mCompiledShader, "uPixelColor");
+        this.mModelMatrixRef = gl.getUniformLocation(this.mCompiledShader, "uModelXformMatrix");
+        this.mCameraMatrixRef = gl.getUniformLocation(this.mCompiledShader, "uCameraXformMatrix");
       }
     }
   }
 
 
   // Activate the shader for rendering
-  activate(pixelColor: vec4) {
+  activate(pixelColor: vec4, trsMatrix: mat4, cameraMatrix: mat4) {
     let gl = glSys.get();
     if (gl && this.mVertexPositionRef !== null && this.mVertexPositionRef > -1) {
       gl.useProgram(this.mCompiledShader);
@@ -74,6 +81,8 @@ class SimpleShader {
 
       // load uniforms
       gl.uniform4fv(this.mPixelColorRef, pixelColor);
+      gl.uniformMatrix4fv(this.mModelMatrixRef, false, trsMatrix);
+      gl.uniformMatrix4fv(this.mCameraMatrixRef, false, cameraMatrix);
     }
   }
 }

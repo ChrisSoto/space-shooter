@@ -9,11 +9,14 @@
 
 // general utilities
 import Renderable from "./renderable";
+import { Transform } from "./transform";
+import { Camera } from "./camera";
 
 // local to this file only
 import * as glSys from "../core/gl";
 import * as vertexBuffer from "../core/vertex_buffer";
 import * as shaderResources from "../core/shader_resource";
+import * as input from "./input.js";
 import { vec4 } from "gl-matrix";
 
 // general engine utilities
@@ -21,6 +24,7 @@ function init(htmlCanvasID: string) {
   glSys.init(htmlCanvasID);
   vertexBuffer.init();
   shaderResources.init();
+  input.init();
 }
 
 function clearCanvas(color: vec4) {
@@ -33,8 +37,11 @@ function clearCanvas(color: vec4) {
 
 
 export default {
+  // input support
+  input,
+
   // Util classes
-  Renderable,
+  Renderable, Transform, Camera,
 
   // functions
   init, clearCanvas
