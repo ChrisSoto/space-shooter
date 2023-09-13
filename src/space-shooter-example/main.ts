@@ -6,9 +6,7 @@ import { EnemyManager } from "./enemy-manager";
 import { ExplosionManager } from "./explosion-manager";
 import { Player } from "./player";
 
-const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
-
-const engine = new Engine(canvas);
+const engine = new Engine('canvas');
 
 await Content.uploadSpriteSheet(engine.gl, "main", "assets/Spritesheet/sheet.png");
 await Content.uploadSprite(engine.gl, "background", "assets/Backgrounds/purple.png");

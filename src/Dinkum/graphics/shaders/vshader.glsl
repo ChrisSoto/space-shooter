@@ -9,10 +9,11 @@ layout(location=2) in vec3 aColor;
 out vec2 vTexCoords;
 out vec3 vColor;
 
-uniform mat4 projectionViewMatrix;
+uniform mat4 uProjectionViewMatrix;
+uniform mat4 uModelTransformMatrix;
 
 void main(){
-  gl_Position = projectionViewMatrix * vec4(aPosition, 0.0, 1.0);
+  gl_Position = uProjectionViewMatrix * vec4(aPosition, 0.0, 1.0);
   vTexCoords = aTexCoords;
   vColor = aColor;
 }

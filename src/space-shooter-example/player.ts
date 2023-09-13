@@ -4,6 +4,7 @@ import { Texture } from "../dinkum/graphics/sprite/texture";
 import { InputManager } from "../dinkum/core/input-manager";
 import { Content } from "../dinkum/core/content";
 import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
+import { Sprite } from "../dinkum/graphics/sprite/sprite";
 
 const SPEED = 0.25;
 
@@ -12,12 +13,13 @@ export class Player {
   public drawRect: Rect;
   private sourceRect: Rect;
   private texture: Texture;
+  private sprite: Sprite;
 
   constructor(private inputManager: InputManager, private width: number, private height: number) {
-    const playerSprite = Content.sprites["playerShip2_red"];
-    this.texture = playerSprite.texture;
-    this.drawRect = playerSprite.drawRect.copy();
-    this.sourceRect = playerSprite.sourceRect.copy();
+    this.sprite = Content.sprites["playerShip2_red"];
+    this.texture = this.sprite.texture;
+    this.drawRect = this.sprite.drawRect.copy();
+    this.sourceRect = this.sprite.sourceRect.copy();
   }
 
   public update(dt: number) {
@@ -42,6 +44,15 @@ export class Player {
     this.drawRect.x += this.movementDirection[0];
     this.drawRect.y += this.movementDirection[1];
 
+    this.keepInBounds();
+  }
+
+  public draw(spriteRenderer: SpriteRenderer) {
+    // spriteRenderer.drawSprite(this.sprite, this.drawRect)
+    spriteRenderer.drawSprite(this.texture, this.drawRect, this.sourceRect);
+  }
+
+  private keepInBounds() {
     if (this.drawRect.x < 0) {
       this.drawRect.x = 0;
     } else if (this.drawRect.x > this.width - this.drawRect.width) {
@@ -53,9 +64,5 @@ export class Player {
     } else if (this.drawRect.y > this.height - this.drawRect.height) {
       this.drawRect.y = this.height - this.drawRect.height;
     }
-  }
-
-  public draw(spriteRenderer: SpriteRenderer) {
-    spriteRenderer.drawSprite(this.texture, this.drawRect, this.sourceRect);
   }
 }

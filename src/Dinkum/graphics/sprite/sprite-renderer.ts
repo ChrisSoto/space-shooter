@@ -21,6 +21,7 @@ export class SpriteRenderer {
 
   private program!: WebGLProgram;
   private projectionViewMatrixLocation!: WebGLUniformLocation;
+  private modelTransformMatrixLocation!: WebGLUniformLocation;
   private camera!: Camera;
   private buffer!: WebGLBuffer;
   private indexBuffer!: WebGLBuffer;
@@ -60,12 +61,11 @@ export class SpriteRenderer {
 
     this.camera = new Camera(this.width, this.height);
 
-    console.log('create shaders');
     const vertexShader = ProgramUtil.createShader(this.gl, this.gl.VERTEX_SHADER, vertexShaderSource)!;
     const fragmentShader = ProgramUtil.createShader(this.gl, this.gl.FRAGMENT_SHADER, fragmentShaderSource)!;
-    console.log('create program');
     this.program = ProgramUtil.createProgram(this.gl, vertexShader, fragmentShader)!;
-    this.projectionViewMatrixLocation = this.gl.getUniformLocation(this.program, "projectionViewMatrix")!;
+    this.projectionViewMatrixLocation = this.gl.getUniformLocation(this.program, "uProjectionViewMatrix")!;
+    this.modelTransformMatrixLocation = this.gl.getUniformLocation(this.program, "uModelTransformMatrix")!;
 
     //
     // position buffer
@@ -111,7 +111,7 @@ export class SpriteRenderer {
     this.gl.enable(this.gl.BLEND);
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
     this.gl.useProgram(this.program);
-    this.gl.uniformMatrix4fv(this.projectionViewMatrixLocation, false, this.camera.projectionViewMatrix);
+    // this.gl.uniformMatrix4fv(this.projectionViewMatrixLocation, false, this.camera.projectionViewMatrix);
   }
 
   private setTexture(texture: Texture) {
@@ -223,6 +223,7 @@ export class SpriteRenderer {
     // this.instanceCount = 0;
     // this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+    this.gl.uniformMatrix4fv(this.projectionViewMatrixLocation, false, this.camera.projectionViewMatrix);
   }
 
   public end() {

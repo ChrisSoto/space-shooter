@@ -1,4 +1,8 @@
-[ ] get space-shooter back to working order by making it possible to setup textures before game starts
+[X] get space-shooter back to working order by making it possible to setup textures before game starts
+[ ] camera
+[ ] culling
+[ ] setup a system that understands render order for what is visible on screen
+[ ] setup a render layer system
 [ ] maybe use texture loading as a setup screen
 [ ] setup observable modal system for event notifications
 [ ] engine should have inputs like batching process
