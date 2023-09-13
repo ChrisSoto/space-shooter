@@ -5,7 +5,7 @@
  */
 
 import { mat4, vec2, vec3, vec4 } from "gl-matrix";
-import * as glSys from "../core/gl";
+import * as glSys from "./core/gl";
 
 const eViewport = Object.freeze({
   eOrgX: 0,

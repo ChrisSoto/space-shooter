@@ -6,8 +6,8 @@
  */
 
 import { mat4, vec4 } from "gl-matrix";
-import * as glSys from "../core/gl";
-import * as shaderResources from "../core/shader_resource";
+import * as glSys from "./core/gl";
+import * as shaderResources from "./core/shader_resource";
 import SimpleShader from "../simple_shader";
 import { Transform } from "./transform";
 import Camera from "./camera";

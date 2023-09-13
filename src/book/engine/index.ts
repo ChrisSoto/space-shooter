@@ -13,9 +13,9 @@ import { Transform } from "./transform";
 import { Camera } from "./camera";
 
 // local to this file only
-import * as glSys from "../core/gl";
-import * as vertexBuffer from "../core/vertex_buffer";
-import * as shaderResources from "../core/shader_resource";
+import * as glSys from "./core/gl.js";
+import * as vertexBuffer from "./core/vertex_buffer.js";
+import * as shaderResources from "./core/shader_resource.js";
 import * as input from "./input.js";
 import { vec4 } from "gl-matrix";
 

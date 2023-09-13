@@ -7,8 +7,8 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 import { mat4, vec4 } from "gl-matrix";
-import * as glSys from "./core/gl.js";
-import * as vertexBuffer from "./core/vertex_buffer";
+import * as glSys from "./engine/core/gl.js";
+import * as vertexBuffer from "./engine/core/vertex_buffer.js";
 
 class SimpleShader {
   mCompiledShader: WebGLProgram | null;

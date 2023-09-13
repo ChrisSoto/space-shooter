@@ -5,7 +5,7 @@
  * contains vertex positions of a square onto the gl context
  * 
  */
-import * as glSys from "../core/gl.js";
+import * as glSys from "./gl.js";
 
 // reference to the vertex positions for the square in the gl context
 let mGLVertexBuffer: WebGLBuffer | null;

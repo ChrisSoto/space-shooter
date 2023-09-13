@@ -5,7 +5,7 @@
  * 
  */
 
-import SimpleShader from "../simple_shader.js";
+import SimpleShader from "../../simple_shader.js";
 import kSimpleVS from "../core/glsl_shaders/simple_vs.glsl?raw";
 import kSimpleFS from "../core/glsl_shaders/simple_fs.glsl?raw";
 
