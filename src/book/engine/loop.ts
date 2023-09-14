@@ -5,8 +5,9 @@
  * 
  */
 
-import { MyGame } from "../my-game";
 import * as input from "./input.js";
+import * as map from "./core/resource_map.js";
+import Scene from "./scene.js";
 
 const kUPS = 60; // Updates per second
 const kMPF = 1000 / kUPS; // Milliseconds per update.
@@ -17,7 +18,7 @@ let mLagTime: number;
 
 // The current loop state (running or should stop)
 let mLoopRunning = false;
-let mCurrentScene: MyGame;
+let mCurrentScene: Scene | null;
 let mFrameID = -1;
 
 // This function loops over draw/update once
@@ -29,37 +30,45 @@ function loopOnce() {
     // Step B: now let's draw
     //         draw() MUST be called before update()
     //         as update() may stop the loop!
-    mCurrentScene.draw();
 
-    // Step C: compute how much time has elapsed since  last loopOnce was executed
-    let currentTime = performance.now();
-    let elapsedTime = currentTime - mPrevTime;
-    mPrevTime = currentTime;
-    mLagTime += elapsedTime;
+    if (mCurrentScene) {
+      mCurrentScene.draw();
 
-    // Step D: Make sure we update the game the appropriate number of times.
-    //      Update only every kMPF (1/60 of a second)
-    //      If lag larger then update frames, update until caught up.
-    while ((mLagTime >= kMPF) && mLoopRunning) {
-      input.update();
-      mCurrentScene.update();
-      mLagTime -= kMPF;
+      // Step C: compute how much time has elapsed since  last loopOnce was executed
+      let currentTime = performance.now();
+      let elapsedTime = currentTime - mPrevTime;
+      mPrevTime = currentTime;
+      mLagTime += elapsedTime;
+
+      // Step D: Make sure we update the game the appropriate number of times.
+      //      Update only every kMPF (1/60 of a second)
+      //      If lag larger then update frames, update until caught up.
+      while ((mLagTime >= kMPF) && mLoopRunning) {
+        input.update();
+        mCurrentScene.update();
+        mLagTime -= kMPF;
+      }
     }
   }
 }
 
-function start(scene: any) {
+async function start(scene: Scene) {
   if (mLoopRunning) {
     throw new Error("loop already running")
   }
 
   mCurrentScene = scene;
-  mCurrentScene.init();
+  mCurrentScene.load();
 
+  // Wait for any async requests before game-load
+  await map.waitOnPromises();
+
+  mCurrentScene.init();
   mPrevTime = performance.now();
   mLagTime = 0.0;
   mLoopRunning = true;
   mFrameID = requestAnimationFrame(loopOnce);
+
 }
 
 function stop() {
@@ -68,4 +77,14 @@ function stop() {
   cancelAnimationFrame(mFrameID);
 }
 
-export { start, stop }
+function cleanUp() {
+  if (mLoopRunning && mCurrentScene) {
+    stop();
+
+    // unload all resources
+    mCurrentScene.unload();
+    mCurrentScene = null;
+  }
+}
+
+export { start, stop, cleanUp }

@@ -35,5 +35,12 @@ function init() {
   }
 }
 
+function cleanUp() {
+  if (mGLVertexBuffer !== null) {
+    glSys.get().deleteBuffer(mGLVertexBuffer);
+    mGLVertexBuffer = null;
+  }
+}
+
 // export these symbols
-export { init, get }
+export { init, get, cleanUp }

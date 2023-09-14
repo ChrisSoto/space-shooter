@@ -1,6 +1,5 @@
 
 import { vec2 } from "gl-matrix";
-import { Content } from "./content";
 import { InputManager } from "./input-manager";
 import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 
@@ -26,16 +25,9 @@ export class Engine {
   }
 
   public async initialize() {
-    // this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    // this.gl = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
-    // this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
     this.inputManager.initialize();
-
     this.clientBounds[0] = this.canvas.width;
     this.clientBounds[1] = this.canvas.height;
-
-    // await Content.initialize(this.gl);
-
     this.spriteRenderer = new SpriteRenderer(this.gl, this.canvas.width, this.canvas.height);
     await this.spriteRenderer.initialize();
   }

@@ -66,7 +66,7 @@ class SimpleShader {
   // Activate the shader for rendering
   activate(pixelColor: vec4, trsMatrix: mat4, cameraMatrix: mat4) {
     let gl = glSys.get();
-    if (gl && this.mVertexPositionRef !== null && this.mVertexPositionRef > -1) {
+    if (this.mVertexPositionRef !== null && this.mVertexPositionRef > -1) {
       gl.useProgram(this.mCompiledShader);
 
       // bind vertex buffer
@@ -84,6 +84,16 @@ class SimpleShader {
       gl.uniformMatrix4fv(this.mModelMatrixRef, false, trsMatrix);
       gl.uniformMatrix4fv(this.mCameraMatrixRef, false, cameraMatrix);
     }
+  }
+
+  cleanUp() {
+    let gl = glSys.get();
+    if (!this.mCompiledShader || !this.mVertexShader || !this.mFragmentShader) return;
+    gl.detachShader(this.mCompiledShader, this.mVertexShader);
+    gl.detachShader(this.mCompiledShader, this.mFragmentShader);
+    gl.deleteShader(this.mVertexShader);
+    gl.deleteShader(this.mFragmentShader);
+    gl.deleteProgram(this.mCompiledShader);
   }
 }
 

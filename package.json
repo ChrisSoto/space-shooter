@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "gl-matrix": "^3.4.3",
+    "twgl.js": "^5.5.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   }

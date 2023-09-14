@@ -12,6 +12,6 @@ export class InputManager {
   }
 
   public isKeyUp(key: string): boolean {
-    return this.keydown[key];
+    return !this.keydown[key];
   }
 }

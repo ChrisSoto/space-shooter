@@ -90,6 +90,8 @@ function isKeyPressed(keyCode: number) {
   return mIsKeyPressed[keyCode];
 }
 
+function cleanUp() { }  // nothing to do for now
+
 function isKeyClicked(keyCode: number) {
   return mIsKeyClicked[keyCode];
 }
@@ -98,5 +100,6 @@ export {
   keys, init,
   update,
   isKeyClicked,
-  isKeyPressed
+  isKeyPressed,
+  cleanUp
 }

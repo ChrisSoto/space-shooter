@@ -16,9 +16,15 @@ function createShaders() {
   mConstColorShader = new SimpleShader(kSimpleVS, kSimpleFS);
 }
 
+function cleanUp() {
+  mConstColorShader.cleanUp();
+  // text.unload(kSimpleVS);
+  // text.unload(kSimpleFS);
+}
+
 function init() {
   createShaders();
 }
 function getConstColorShader() { return mConstColorShader; }
 
-export { init, getConstColorShader }
+export { init, getConstColorShader, cleanUp }

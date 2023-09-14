@@ -1,4 +1,8 @@
 [X] get space-shooter back to working order by making it possible to setup textures before game starts
+[ ] need the ability to create containers/surfaces that are display layers
+[ ] rect needs methods for copy, global and local coordinates (top left)
+[ ] need the ability to draw lines
+[ ] maybe the ability to draw curves...
 [ ] camera
 [ ] culling
 [ ] setup a system that understands render order for what is visible on screen
