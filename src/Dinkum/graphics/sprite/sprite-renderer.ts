@@ -22,7 +22,7 @@ export class SpriteRenderer {
   private program!: WebGLProgram;
   private projectionViewMatrixLocation!: WebGLUniformLocation;
   private modelTransformMatrixLocation!: WebGLUniformLocation;
-  private camera!: Camera;
+  // private camera!: Camera;
   private buffer!: WebGLBuffer;
   private indexBuffer!: WebGLBuffer;
   private data: Float32Array = new Float32Array(FLOATS_PER_SPRITE * MAX_NUMBER_OF_SPRITES);
@@ -36,8 +36,7 @@ export class SpriteRenderer {
 
   constructor(
     private gl: WebGL2RenderingContext,
-    private width: number,
-    private height: number) { }
+    private camera: Camera) { }
 
   private setupIndexbufferData() {
 
@@ -58,9 +57,6 @@ export class SpriteRenderer {
   }
 
   public async initialize() {
-
-    this.camera = new Camera(this.width, this.height);
-
     const vertexShader = ProgramUtil.createShader(this.gl, this.gl.VERTEX_SHADER, vertexShaderSource)!;
     const fragmentShader = ProgramUtil.createShader(this.gl, this.gl.FRAGMENT_SHADER, fragmentShaderSource)!;
     this.program = ProgramUtil.createProgram(this.gl, vertexShader, fragmentShader)!;
@@ -104,7 +100,6 @@ export class SpriteRenderer {
     // index buffer
     //
 
-    console.log('create index buffer');
     this.indexBuffer = BufferUtil.createIndexBuffer(this.gl, this.setupIndexbufferData());
 
     this.camera.update();

@@ -6,7 +6,7 @@ export class Camera {
 
   public projectionViewMatrix: mat4;
 
-  constructor(public width: number, public height: number) {
+  constructor(public gl: WebGL2RenderingContext, public width: number, public height: number) {
     this.projectionViewMatrix = mat4.create();
   }
 
@@ -19,5 +19,11 @@ export class Camera {
     this.projection = mat4.ortho(mat4.create(), 0, this.width, this.height, 0, -1, 1);
 
     mat4.mul(this.projectionViewMatrix, this.projection, this.view);
+  }
+
+  public clear() {
+    this.gl.viewport(0, 0, this.width, this.height);
+    this.gl.clearColor(0.8, 0.8, 0.8, 1.0);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
   }
 }

@@ -2,25 +2,24 @@
 import { vec2 } from "gl-matrix";
 import { InputManager } from "./input-manager";
 import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
+import { Camera } from "../camera/camera";
 
 export class Engine {
   private canvas: HTMLCanvasElement;
-  // public gl: WebGL2RenderingContext = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
   public gl!: WebGL2RenderingContext;
   private lastTime = 0;
-
   public spriteRenderer!: SpriteRenderer;
   public inputManager = new InputManager();
-
   public clientBounds = vec2.create();
+  public camera!: Camera;
 
-  public onUpdate = (dt: number) => { };
+
+  public onUpdate = (_dt: number) => { };
   public onDraw = () => { };
 
   constructor(private canvasId: string) {
     this.canvas = document.getElementById(this.canvasId) as HTMLCanvasElement;
     this.gl = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
-    console.log('init webGL', this.gl);
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
   }
 
@@ -28,14 +27,9 @@ export class Engine {
     this.inputManager.initialize();
     this.clientBounds[0] = this.canvas.width;
     this.clientBounds[1] = this.canvas.height;
-    this.spriteRenderer = new SpriteRenderer(this.gl, this.canvas.width, this.canvas.height);
+    this.camera = new Camera(this.gl, this.canvas.width, this.canvas.height);
+    this.spriteRenderer = new SpriteRenderer(this.gl, this.camera);
     await this.spriteRenderer.initialize();
-  }
-
-  private clear() {
-    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-    this.gl.clearColor(0.8, 0.8, 0.8, 1.0);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
   }
 
   public draw() {
@@ -46,7 +40,7 @@ export class Engine {
 
     this.onUpdate(dt);
 
-    this.clear();
+    this.camera.clear();
 
     this.onDraw();
 
