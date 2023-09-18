@@ -4,6 +4,7 @@ import { InputManager } from "./input-manager";
 import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 import { Camera } from "../camera/camera";
 
+
 export class Engine {
   private canvas: HTMLCanvasElement;
   public gl!: WebGL2RenderingContext;
@@ -37,6 +38,8 @@ export class Engine {
     const now = performance.now();
     const dt = now - this.lastTime;
     this.lastTime = now;
+
+    this.camera.update();
 
     this.onUpdate(dt);
 

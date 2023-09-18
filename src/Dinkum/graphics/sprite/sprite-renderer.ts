@@ -102,7 +102,7 @@ export class SpriteRenderer {
 
     this.indexBuffer = BufferUtil.createIndexBuffer(this.gl, this.setupIndexbufferData());
 
-    this.camera.update();
+    // this.camera.update();
     this.gl.enable(this.gl.BLEND);
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
     this.gl.useProgram(this.program);
@@ -218,6 +218,7 @@ export class SpriteRenderer {
     // this.instanceCount = 0;
     // this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+    this.camera.update();
     this.gl.uniformMatrix4fv(this.projectionViewMatrixLocation, false, this.camera.projectionViewMatrix);
   }
 

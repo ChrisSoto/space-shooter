@@ -14,6 +14,13 @@ export class BufferUtil {
     return buffer;
   }
 
+  public static createVertexArrayObject(gl: WebGL2RenderingContext, data: Float32Array) {
+    const buffer = gl.createBuffer()!;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    return gl.createVertexArray();
+  }
+
   /**
    * creates buffer to store data to gpu
    * @param data 

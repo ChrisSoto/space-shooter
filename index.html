@@ -6,10 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WebGL2</title>
   </head>
+  <style>
+    #canvas-wrapper {
+      width: 100%;
+    }
+    canvas {
+      width: 80%;
+      margin-left: 10%;
+    }
+  </style>
   <body>
-    <canvas id="canvas" width="640" height="480"></canvas>
-    <script type="module" src="/src/space-shooter-example/main.ts"></script>
+    <div id="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+    </div>
+    <!-- <script type="module" src="/src/space-shooter-example/main.ts"></script> -->
+    <script type="module" src="/src/dinkum/core/renderer.ts"></script>
     <!-- <script type="module" src="/src/tile-example/main.ts"></script> -->
     <!-- <script type="module" src="/src/book/my-game.ts"></script> -->
+    <!-- <script type="module" src="/src/webgl2/main.ts"></script> -->
   </body>
 </html>

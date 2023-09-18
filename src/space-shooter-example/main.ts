@@ -1,15 +1,22 @@
 import { Content } from "../dinkum/core/content";
 import { Engine } from "../dinkum/core/engine";
+import { Resize } from "../dinkum/util/resize";
 import { Background } from "./background";
 import { BulletManager } from "./bullet-manager";
 import { EnemyManager } from "./enemy-manager";
 import { ExplosionManager } from "./explosion-manager";
 import { Player } from "./player";
+import * as TWGL from "../../node_modules/twgl.js/dist/5.x/twgl-full";
+
+console.log();
 
 const engine = new Engine('canvas');
 
 await Content.uploadSpriteSheet(engine.gl, "main", "assets/Spritesheet/sheet.png");
 await Content.uploadSprite(engine.gl, "background", "assets/Backgrounds/purple.png");
+
+const resize = new Resize(engine.gl, 1200, 700);
+resize.resizeCanvasToDisplaySize();
 
 engine.initialize()
   .then(() => {
@@ -22,6 +29,7 @@ engine.initialize()
 
     // update movement
     engine.onUpdate = (dt: number) => {
+      resize.resizeCanvasToDisplaySize();
       background.update(dt);
       player.update(dt);
       enemyManager.update(dt);

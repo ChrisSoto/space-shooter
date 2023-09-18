@@ -1,6 +1,7 @@
 [X] get space-shooter back to working order by making it possible to setup textures before game starts
 [ ] need the ability to create containers/surfaces that are display layers
 [ ] rect needs methods for copy, global and local coordinates (top left)
+[ ] need a layout engine that works like div-image era web dev
 [ ] need the ability to draw lines
 [ ] maybe the ability to draw curves...
 [ ] camera
