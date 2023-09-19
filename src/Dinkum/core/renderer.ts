@@ -4,11 +4,8 @@ import fragmentShaderSource from "../graphics/shaders/fshader2.glsl?raw";
 // set of render command
 
 import { mat3, mat4, vec2, vec3, vec4 } from "gl-matrix";
-import { Camera } from "../camera/camera";
 import { ProgramUtil } from "../graphics/program-util";
 import { Resize } from "../util/resize";
-import { BufferUtil } from "../graphics/buffer-util";
-import { Texture } from "../graphics/sprite/texture";
 import { BufferType, RenderLayer } from "./render-layer";
 
 export default class Renderer {
@@ -88,11 +85,11 @@ export default class Renderer {
   public draw(): void {
     const size = 5;
     for (const name in this.layers) {
-      // this.layers[name].drawQuad([0, 0], [size, size], [1, 0, 1, 1]);
-      // this.layers[name].drawQuad([this.canvas.width - size, 0], [size, size], [0, 0, 1, 1]);
-      // this.layers[name].drawQuad([0, this.canvas.height - size], [size, size], [0, 1, 0, 1]);
-      // this.layers[name].drawQuad([this.canvas.width - size, this.canvas.height - size], [size, size], [1, 0, 0, 1]);
-      for (let i = 0; i < 100; i++) {
+      // this.layers[name].drawQuad([0, 0], [size, size], [1, 0, 0, 1]);
+      // this.layers[name].drawQuad([this.canvas.width - size, 0], [size, size], [0, 1, 0, 1]);
+      // this.layers[name].drawQuad([0, this.canvas.height - size], [size, size], [0, 0, 1, 1]);
+      // this.layers[name].drawQuad([this.canvas.width - size, this.canvas.height - size], [size, size], [1, 0, 1, 1]);
+      for (let i = 0; i < 3000; i++) {
         this.layers[name].drawQuad(
           [Math.random() * this.canvas.width, Math.random() * this.canvas.height],
           [size, size], [Math.random(), Math.random(), Math.random(), 1]);
