@@ -1,13 +1,13 @@
 [X] get space-shooter back to working order by making it possible to setup textures before game starts
-[ ] need the ability to create containers/surfaces that are display layers
+[X] need the ability to create containers/surfaces that are display layers
 [ ] rect needs methods for copy, global and local coordinates (top left)
 [ ] need a layout engine that works like div-image era web dev
 [ ] need the ability to draw lines
 [ ] maybe the ability to draw curves...
 [ ] camera
 [ ] culling
-[ ] setup a system that understands render order for what is visible on screen
-[ ] setup a render layer system
+[X] setup a system that understands render order for what is visible on screen
+[X] setup a render layer system
 [ ] maybe use texture loading as a setup screen
 [ ] setup observable modal system for event notifications
-[ ] engine should have inputs like batching process
+[X] engine should have inputs like batching process
