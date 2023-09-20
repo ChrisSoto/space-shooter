@@ -33,4 +33,8 @@ export class BufferUtil {
 
     return buffer;
   }
+
+  public static resizeBuffer(currentSize: number) {
+    return Math.round(currentSize + currentSize * 0.15);
+  }
 }

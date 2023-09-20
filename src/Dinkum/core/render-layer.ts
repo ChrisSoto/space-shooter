@@ -10,13 +10,13 @@ export enum BufferType {
   INSTANCED = 'INSTANCED',
 }
 
-const MAX_SPRITES = 3000;
 const INDICES_PER_SPRITE = 6;
 
 export class RenderLayer {
   data!: Float32Array;
   buffer!: WebGLBuffer;
   batchCount: number = 0;
+  maxSprites = 100000;
   constructor(public renderer: Renderer, public bufferType?: BufferType,) {
     this.setBufferType();
 
@@ -28,21 +28,22 @@ export class RenderLayer {
     switch (this.bufferType) {
       case BufferType.NORMAL:
         this.data = new Float32Array(5 * 4);
-        this.setNormalLayerBuffers();
+        this.setLayerBuffers();
         this.drawQuad = this.drawQuadNormal
         break;
       case BufferType.BATCHED:
-        this.data = new Float32Array(5 * 4);
-        this.setBatchedLayerBuffers();
+        this.data = new Float32Array((5 * 4) * this.maxSprites);
+        this.setLayerBuffers();
         this.drawQuad = this.drawQuadBatched
+        this.renderer.addToEnd(this.drawQuadBatchedPromise())
         break;
       case BufferType.SHARED:
         // shared with who?
         // this.renderer.data;
         break;
       case BufferType.INSTANCED:
-        this.setupInstancedRendering();
         this.data = new Float32Array(5 * 4);
+        this.setupInstancedRendering();
         break;
       default:
         this.bufferType = BufferType.NORMAL;
@@ -52,27 +53,6 @@ export class RenderLayer {
   }
 
   public drawQuad = (_position: vec2 | vec3, _size: vec2, _color: vec4, _texture?: Texture) => { }
-
-  // public drawQuad(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
-  //   this.quadData(position, size, color);
-  //   switch (this.bufferType) {
-  //     case BufferType.NORMAL:
-  //       this.drawQuadNormal();
-  //       break;
-  //     case BufferType.BATCHED:
-  //       // this.drawQuadBatched(quad);
-  //       break;
-  //     case BufferType.SHARED:
-  //       // this.drawQuadShared(quad);
-  //       break;
-  //     case BufferType.INSTANCED:
-  //       // this.drawQuadInstanced(quad);
-  //       break;
-  //     default:
-  //       this.drawQuadNormal();
-  //       break;
-  //   }
-  // }
 
   private quadData(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
     // top left
@@ -104,7 +84,39 @@ export class RenderLayer {
     this.data[19] = color[2]; // b
   }
 
-  private setBatchedLayerBuffers() {
+  private quadDataBatched(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
+    let i = this.batchCount * (5 * 4);
+    // top left
+    this.data[0 + i] = position[0]; // x
+    this.data[1 + i] = position[1] + size[1]; // y
+    this.data[2 + i] = color[0]; // r
+    this.data[3 + i] = color[1]; // g
+    this.data[4 + i] = color[2]; // b
+
+    // top right
+    this.data[5 + i] = position[0] + size[0]; // x
+    this.data[6 + i] = position[1] + size[1]; // y
+    this.data[7 + i] = color[0]; // r
+    this.data[8 + i] = color[1]; // g
+    this.data[9 + i] = color[2]; // b
+
+    // bottom right
+    this.data[10 + i] = position[0]; // x
+    this.data[11 + i] = position[1]; // y
+    this.data[12 + i] = color[0]; // r
+    this.data[13 + i] = color[1]; // g
+    this.data[14 + i] = color[2]; // b
+
+    // bottom left
+    this.data[15 + i] = position[0] + size[0]; // x
+    this.data[16 + i] = position[1]; // y
+    this.data[17 + i] = color[0]; // r
+    this.data[18 + i] = color[1]; // g
+    this.data[19 + i] = color[2]; // b
+
+  }
+
+  private setLayerBuffers() {
     this.buffer = BufferUtil.createArrayBuffer(this.renderer.gl, this.data);
 
     this.setBatchedIndexBufferData();
@@ -122,9 +134,9 @@ export class RenderLayer {
 
   private setBatchedIndexBufferData() {
 
-    const data = new Uint16Array(MAX_SPRITES * INDICES_PER_SPRITE);
+    const data = new Uint16Array(this.maxSprites * INDICES_PER_SPRITE);
 
-    for (let i = 0; i < MAX_SPRITES; i++) {
+    for (let i = 0; i < this.maxSprites; i++) {
       // t1
       data[i * INDICES_PER_SPRITE + 0] = i * 4 + 0;
       data[i * INDICES_PER_SPRITE + 1] = i * 4 + 1;
@@ -140,35 +152,29 @@ export class RenderLayer {
     this.renderer.gl.bindBuffer(this.renderer.gl.ELEMENT_ARRAY_BUFFER, buffer);
   }
 
-  private setNormalLayerBuffers() {
-    this.buffer = BufferUtil.createArrayBuffer(this.renderer.gl, this.data);
-
-    this.setBatchedIndexBufferData();
-
-    const stride = 2 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
-
-    this.renderer.gl.vertexAttribPointer(this.renderer.positionLocation, 2, this.renderer.gl.FLOAT, false, stride, 0);
-    this.renderer.gl.vertexAttribPointer(this.renderer.colorLocation, 3, this.renderer.gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
-
-    this.renderer.gl.enableVertexAttribArray(this.renderer.positionLocation);
-    this.renderer.gl.enableVertexAttribArray(this.renderer.colorLocation);
-
-    this.renderer.gl.bindBuffer(this.renderer.gl.ARRAY_BUFFER, this.buffer);
-  }
-
   private drawQuadNormal(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
     this.quadData(position, size, color);
     this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
     this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, 6, this.renderer.gl.UNSIGNED_SHORT, 0);
   }
 
-  // this has to be defferred till renderer.end()
   private drawQuadBatched(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
-    // access data stored on layer
-    this.quadData(position, size, color);
-    this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
-    this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, 6 * this.batchCount, this.renderer.gl.UNSIGNED_SHORT, 0);
-    this.batchCount = 0;
+    this.quadDataBatched(position, size, color);
+    this.batchCount++;
+  }
+
+  private async drawQuadBatchedPromise(): Promise<() => void> {
+    return new Promise((resolve, reject) => {
+      resolve(() => {
+        this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
+        this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, 6 * this.batchCount, this.renderer.gl.UNSIGNED_SHORT, 0);
+        this.batchCount = 0;
+      });
+    });
+  }
+
+  private test() {
+    // console.log('Im called');
   }
 
   private drawQuadShared(data: Float32Array) {

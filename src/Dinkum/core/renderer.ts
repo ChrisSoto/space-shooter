@@ -25,6 +25,8 @@ export default class Renderer {
     zoom: 1,
   };
 
+  private delayedDraws: (Promise<() => void>)[] = [];
+
   constructor(public selector: string) {
     this.canvas = document.getElementById(selector) as HTMLCanvasElement;
     this.gl = this.canvas.getContext("webgl2")!;
@@ -77,23 +79,33 @@ export default class Renderer {
     this.gl.uniformMatrix4fv(this.viewProjectionMatLocation, false, projection);
   }
 
-  public end() {
-    // this.gl.drawElements(this.gl.TRIANGLES, 6, this.gl.UNSIGNED_BYTE, 0);
+  public addToEnd(delayedDraw: Promise<() => void>) {
+    this.delayedDraws.push(delayedDraw);
   }
 
+  public end() {
+    Promise.all(this.delayedDraws)
+      .then((fns) => {
+        for (let i = 0; i < fns.length; i++) {
+          fns[i]();
+        }
+      })
+  }
 
   public draw(): void {
-    const size = 5;
+    const size = 50;
+    const little = 5;
     for (const name in this.layers) {
-      // this.layers[name].drawQuad([0, 0], [size, size], [1, 0, 0, 1]);
-      // this.layers[name].drawQuad([this.canvas.width - size, 0], [size, size], [0, 1, 0, 1]);
-      // this.layers[name].drawQuad([0, this.canvas.height - size], [size, size], [0, 0, 1, 1]);
-      // this.layers[name].drawQuad([this.canvas.width - size, this.canvas.height - size], [size, size], [1, 0, 1, 1]);
-      for (let i = 0; i < 3000; i++) {
+
+      for (let i = 0; i < 100; i++) {
         this.layers[name].drawQuad(
           [Math.random() * this.canvas.width, Math.random() * this.canvas.height],
-          [size, size], [Math.random(), Math.random(), Math.random(), 1]);
+          [little, little], [Math.random(), Math.random(), Math.random(), 1]);
       }
+      this.layers[name].drawQuad([0, 0], [size, size], [1, 0, 0, 1]);
+      this.layers[name].drawQuad([this.canvas.width - size, 0], [size, size], [0, 1, 0, 1]);
+      this.layers[name].drawQuad([0, this.canvas.height - size], [size, size], [0, 0, 1, 1]);
+      this.layers[name].drawQuad([this.canvas.width - size, this.canvas.height - size], [size, size], [1, 0, 1, 1]);
     }
   }
 }
@@ -104,7 +116,7 @@ function degToRad(d: number) {
 
 const renderer = new Renderer("canvas");
 
-renderer.layers['test'] = new RenderLayer(renderer, BufferType.NORMAL);
+renderer.layers['test'] = new RenderLayer(renderer, BufferType.BATCHED);
 // renderer.layers['batch'] = new RenderLayer(renderer, BufferType.BATCHED);
 
 const draw = () => {
