@@ -18,6 +18,7 @@ export default class Renderer {
   public positionLocation: number;
   public colorLocation: number;
   public layers: { [name: string]: RenderLayer } = {};
+  private testTexture: WebGLTexture;
   public camera = {
     x: 0,
     y: 0,
@@ -35,29 +36,15 @@ export default class Renderer {
     this.resize.resizeCanvasToDisplaySize();
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
 
+    this.testTexture = this.loadTexture("assets/uvTexture.png");
+
     const vertexShader = ProgramUtil.createShader(this.gl, this.gl.VERTEX_SHADER, vertexShaderSource)!;
     const fragmentShader = ProgramUtil.createShader(this.gl, this.gl.FRAGMENT_SHADER, fragmentShaderSource)!;
     this.program = ProgramUtil.createProgram(this.gl, vertexShader, fragmentShader)!;
 
-
     this.viewProjectionMatLocation = this.gl.getUniformLocation(this.program, "uProjectionViewMatrix")!;
     this.positionLocation = this.gl.getAttribLocation(this.program, "aPosition");
     this.colorLocation = this.gl.getAttribLocation(this.program, "aColor");
-
-    // const indexBuffer = BufferUtil.createIndexBuffer(this.gl, new Uint8Array([
-    //   0, 1, 2,
-    //   2, 1, 3,
-    // ]));
-
-    // this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-    // const stride = 2 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
-
-    // this.gl.vertexAttribPointer(this.positionLocation, 2, this.gl.FLOAT, false, stride, 0);
-    // this.gl.vertexAttribPointer(this.colorLocation, 3, this.gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
-
-    // this.gl.enableVertexAttribArray(this.positionLocation);
-    // this.gl.enableVertexAttribArray(this.colorLocation);
 
     this.gl.useProgram(this.program);
   }
@@ -84,29 +71,60 @@ export default class Renderer {
   }
 
   public end() {
-    Promise.all(this.delayedDraws)
-      .then((fns) => {
-        for (let i = 0; i < fns.length; i++) {
-          fns[i]();
-        }
-      })
+    for (const name in this.layers) {
+      if (this.layers[name].bufferType === BufferType.BATCHED) {
+        this.layers[name].batchEnd()
+      }
+    }
   }
 
   public draw(): void {
-    const size = 50;
-    const little = 5;
-    for (const name in this.layers) {
+    const little = 10;
+    // get textures working
 
-      for (let i = 0; i < 100; i++) {
-        this.layers[name].drawQuad(
-          [Math.random() * this.canvas.width, Math.random() * this.canvas.height],
-          [little, little], [Math.random(), Math.random(), Math.random(), 1]);
-      }
-      this.layers[name].drawQuad([0, 0], [size, size], [1, 0, 0, 1]);
-      this.layers[name].drawQuad([this.canvas.width - size, 0], [size, size], [0, 1, 0, 1]);
-      this.layers[name].drawQuad([0, this.canvas.height - size], [size, size], [0, 0, 1, 1]);
-      this.layers[name].drawQuad([this.canvas.width - size, this.canvas.height - size], [size, size], [1, 0, 1, 1]);
+    for (let i = 0; i < 100; i++) {
+      this.layers['test'].drawQuad(
+        [Math.random() * this.canvas.width, Math.random() * this.canvas.height],
+        [little, little], [Math.random(), Math.random(), Math.random(), 1]);
     }
+
+    // this.layers['test'].drawQuad([0, 0], [size, size], [1, 0, 0, 1]);
+    // this.layers['test'].drawQuad([this.canvas.width - size, 0], [size, size], [0, 1, 0, 1]);
+    // this.layers['test'].drawQuad([0, this.canvas.height - size], [size, size], [0, 0, 1, 1]);
+    // this.layers['test'].drawQuad([this.canvas.width - size, this.canvas.height - size], [size, size], [1, 0, 1, 1]);
+  }
+
+
+  private loadTexture(uri: string): WebGLTexture {
+    const texture = this.gl.createTexture()!;
+    this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+
+    this.gl.texImage2D(this.gl.TEXTURE_2D,
+      0,
+      this.gl.RGBA,
+      1, // width
+      1, // height
+      0, // border
+      this.gl.RGBA,
+      this.gl.UNSIGNED_BYTE,
+      new Uint8Array([255, 0, 255, 255]));
+
+    const image = new Image();
+    image.onload = () => {
+      this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+      this.gl.texImage2D(this.gl.TEXTURE_2D,
+        0,
+        this.gl.RGBA,
+        this.gl.RGBA,
+        this.gl.UNSIGNED_BYTE,
+        image);
+      this.gl.generateMipmap(this.gl.TEXTURE_2D);
+
+    }
+    image.src = uri;
+
+    return texture;
+
   }
 }
 

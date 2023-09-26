@@ -1,13 +1,58 @@
 [X] get space-shooter back to working order by making it possible to setup textures before game starts
 [X] need the ability to create containers/surfaces that are display layers
-[ ] rect needs methods for copy, global and local coordinates (top left)
-[ ] need a layout engine that works like div-image era web dev
-[ ] need the ability to draw lines
-[ ] maybe the ability to draw curves...
-[ ] camera
-[ ] culling
 [X] setup a system that understands render order for what is visible on screen
 [X] setup a render layer system
+[X] engine should have inputs like batching process
+[X] dynamically add quads to buffer
+[ ] dyanically remove quads from buffer
+[ ] re-integrate new renderer into game engine
+[ ] re-integrate texture rendering 
+[ ] camera - zoom, pan, rotate
+[ ] job scheduling, Service Workers
+[ ] culling
+[ ] need the ability to draw lines, circles
+
+[ ] rect needs methods for copy, global and local coordinates (top left)
+[ ] need a layout engine that works like div-image era web dev
 [ ] maybe use texture loading as a setup screen
 [ ] setup observable modal system for event notifications
-[X] engine should have inputs like batching process
+
+good video
+https://www.youtube.com/watch?v=JxI3Eu5DPwE
+
+Ideas:
+Entities
+  - have a GUID (Globally Unique ID)
+  - have no data or methods
+Components
+  - have no behavrior
+  - they have data/state
+Systems
+  - have no state
+  - methods for acting upon Components should all live inside the Systems
+  - System essentially provides the method-implementation for Components
+
+  ```
+  class GenericEntity {
+    pos = new PosComponent()
+    agility = new AgilityComponent()
+  }
+  class PosComponent {
+    x: number
+    y: number
+  }
+  System {
+    updatePos(pos: PosComponet) {
+      pos.x ++;
+    }
+  }
+  ```
+
+Want to limit the size of the mental model you need to think about code
+
+# thoughts about technology progression
+- technology trickles down from war?
+- technology trickles down from food?
+- technology trickles down from art?
+- animal skin -> wood -> stone -> bronze -> iron -> modern
+- nomadic sheperds -> sheperds w/ agriculture -> institutionalized food

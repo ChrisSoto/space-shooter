@@ -10,14 +10,15 @@ export enum BufferType {
   INSTANCED = 'INSTANCED',
 }
 
-const INDICES_PER_SPRITE = 6;
-
 export class RenderLayer {
-  data!: Float32Array;
-  buffer!: WebGLBuffer;
-  batchCount: number = 0;
-  maxSprites = 100000;
-  constructor(public renderer: Renderer, public bufferType?: BufferType,) {
+  private data!: Float32Array;
+  private buffer!: WebGLBuffer;
+  private batchCount: number = 0;
+  private FLOATS_PER_VERTEX = 5; // pos (x, y), color (r, g, b)
+  private FLOATS_PER_SPRITE = 4 * this.FLOATS_PER_VERTEX; // I think there are 4 bytes per sprite vertex
+  private INDICES_PER_SPRITE = 6; // two triangles
+  private totalSprites = 100;
+  constructor(private renderer: Renderer, public bufferType?: BufferType,) {
     this.setBufferType();
 
     // setting the renderer buffer, the last buffer that can fire
@@ -27,22 +28,22 @@ export class RenderLayer {
   private setBufferType() {
     switch (this.bufferType) {
       case BufferType.NORMAL:
-        this.data = new Float32Array(5 * 4);
+        this.data = new Float32Array(this.FLOATS_PER_SPRITE);
         this.setLayerBuffers();
         this.drawQuad = this.drawQuadNormal
         break;
       case BufferType.BATCHED:
-        this.data = new Float32Array((5 * 4) * this.maxSprites);
+        this.data = new Float32Array((this.FLOATS_PER_SPRITE) * this.totalSprites);
         this.setLayerBuffers();
         this.drawQuad = this.drawQuadBatched
-        this.renderer.addToEnd(this.drawQuadBatchedPromise())
+        // this.renderer.addToEnd(this.drawQuadBatchedPromise())
         break;
       case BufferType.SHARED:
         // shared with who?
         // this.renderer.data;
         break;
       case BufferType.INSTANCED:
-        this.data = new Float32Array(5 * 4);
+        this.data = new Float32Array(this.FLOATS_PER_SPRITE);
         this.setupInstancedRendering();
         break;
       default:
@@ -85,7 +86,7 @@ export class RenderLayer {
   }
 
   private quadDataBatched(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
-    let i = this.batchCount * (5 * 4);
+    let i = this.batchCount * this.FLOATS_PER_SPRITE;
     // top left
     this.data[0 + i] = position[0]; // x
     this.data[1 + i] = position[1] + size[1]; // y
@@ -117,9 +118,7 @@ export class RenderLayer {
   }
 
   private setLayerBuffers() {
-    this.buffer = BufferUtil.createArrayBuffer(this.renderer.gl, this.data);
-
-    this.setBatchedIndexBufferData();
+    this.setBuffer();
 
     const stride = 2 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
 
@@ -128,24 +127,28 @@ export class RenderLayer {
 
     this.renderer.gl.enableVertexAttribArray(this.renderer.positionLocation);
     this.renderer.gl.enableVertexAttribArray(this.renderer.colorLocation);
+  }
 
+  private setBuffer() {
+    this.buffer = BufferUtil.createArrayBuffer(this.renderer.gl, this.data);
+    this.setBatchedIndexBufferData();
     this.renderer.gl.bindBuffer(this.renderer.gl.ARRAY_BUFFER, this.buffer);
   }
 
   private setBatchedIndexBufferData() {
 
-    const data = new Uint16Array(this.maxSprites * INDICES_PER_SPRITE);
+    const data = new Uint16Array(this.totalSprites * this.INDICES_PER_SPRITE);
 
-    for (let i = 0; i < this.maxSprites; i++) {
+    for (let i = 0; i < this.totalSprites; i++) {
       // t1
-      data[i * INDICES_PER_SPRITE + 0] = i * 4 + 0;
-      data[i * INDICES_PER_SPRITE + 1] = i * 4 + 1;
-      data[i * INDICES_PER_SPRITE + 2] = i * 4 + 2;
+      data[i * this.INDICES_PER_SPRITE + 0] = i * 4 + 0;
+      data[i * this.INDICES_PER_SPRITE + 1] = i * 4 + 1;
+      data[i * this.INDICES_PER_SPRITE + 2] = i * 4 + 2;
 
       // t2
-      data[i * INDICES_PER_SPRITE + 3] = i * 4 + 2;
-      data[i * INDICES_PER_SPRITE + 4] = i * 4 + 1;
-      data[i * INDICES_PER_SPRITE + 5] = i * 4 + 3;
+      data[i * this.INDICES_PER_SPRITE + 3] = i * 4 + 2;
+      data[i * this.INDICES_PER_SPRITE + 4] = i * 4 + 1;
+      data[i * this.INDICES_PER_SPRITE + 5] = i * 4 + 3;
     }
 
     const buffer = BufferUtil.createIndexBuffer(this.renderer.gl, new Uint16Array(data));
@@ -155,7 +158,7 @@ export class RenderLayer {
   private drawQuadNormal(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
     this.quadData(position, size, color);
     this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
-    this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, 6, this.renderer.gl.UNSIGNED_SHORT, 0);
+    this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE, this.renderer.gl.UNSIGNED_SHORT, 0);
   }
 
   private drawQuadBatched(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
@@ -163,18 +166,25 @@ export class RenderLayer {
     this.batchCount++;
   }
 
-  private async drawQuadBatchedPromise(): Promise<() => void> {
-    return new Promise((resolve, reject) => {
-      resolve(() => {
-        this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
-        this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, 6 * this.batchCount, this.renderer.gl.UNSIGNED_SHORT, 0);
-        this.batchCount = 0;
-      });
-    });
-  }
+  public batchEnd() {
+    const batch = BufferUtil.resizeBuffer(this.totalSprites, this.batchCount);
 
-  private test() {
-    // console.log('Im called');
+    this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
+    this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE * batch.count, this.renderer.gl.UNSIGNED_SHORT, 0);
+
+    // if batchCount is within 90% of the size of of maxSprites
+    // increase the number of maxSprites by 15%
+    if (batch.tooBig) {
+      this.totalSprites = Math.round(this.batchCount * 1.15);
+
+      this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalSprites);
+      this.setBuffer();
+      const stride = 2 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
+      this.renderer.gl.vertexAttribPointer(this.renderer.positionLocation, 2, this.renderer.gl.FLOAT, false, stride, 0);
+      this.renderer.gl.vertexAttribPointer(this.renderer.colorLocation, 3, this.renderer.gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
+    }
+
+    this.batchCount = 0;
   }
 
   private drawQuadShared(data: Float32Array) {
@@ -194,4 +204,29 @@ export class RenderLayer {
   private setupInstancedRendering() {
 
   }
+
+  // private async drawQuadBatchedPromise(): Promise<() => void> {
+  //   return new Promise((resolve, reject) => {
+  //     resolve(() => {
+  //       const batch = BufferUtil.resizeBuffer(this.totalSprites, this.batchCount);
+
+  //       this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
+  //       this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE * batch.count, this.renderer.gl.UNSIGNED_SHORT, 0);
+
+  //       // if batchCount is within 90% of the size of of maxSprites
+  //       // increase the number of maxSprites by 15%
+  //       if (batch.tooBig) {
+  //         this.totalSprites = Math.round(this.batchCount * 1.15);
+
+  //         this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalSprites);
+  //         this.setBuffer();
+  //         const stride = 2 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
+  //         this.renderer.gl.vertexAttribPointer(this.renderer.positionLocation, 2, this.renderer.gl.FLOAT, false, stride, 0);
+  //         this.renderer.gl.vertexAttribPointer(this.renderer.colorLocation, 3, this.renderer.gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
+  //       }
+
+  //       this.batchCount = 0;
+  //     });
+  //   });
+  // }
 }

@@ -34,7 +34,17 @@ export class BufferUtil {
     return buffer;
   }
 
-  public static resizeBuffer(currentSize: number) {
-    return Math.round(currentSize + currentSize * 0.15);
+  public static resizeBuffer(totalQuads: number, batchCount: number) {
+    if (batchCount <= totalQuads) {
+      return {
+        tooBig: false,
+        count: batchCount
+      };
+    } else {
+      return {
+        tooBig: true,
+        count: totalQuads
+      }
+    }
   }
 }
