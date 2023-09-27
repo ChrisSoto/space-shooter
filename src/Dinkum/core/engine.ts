@@ -2,17 +2,18 @@
 import { vec2 } from "gl-matrix";
 import { InputManager } from "./input-manager";
 import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
-import { Camera } from "../camera/camera";
+import Renderer2D from "./renderer2d";
+import { Camera3 } from "../camera/camera3";
 
 
 export class Engine {
   private canvas: HTMLCanvasElement;
   public gl!: WebGL2RenderingContext;
   private lastTime = 0;
-  public spriteRenderer!: SpriteRenderer;
+  // public spriteRenderer!: SpriteRenderer;
+  public renderer!: Renderer2D;
   public inputManager = new InputManager();
-  public clientBounds = vec2.create();
-  public camera!: Camera;
+  public camera!: Camera3;
 
 
   public onUpdate = (_dt: number) => { };
@@ -26,11 +27,10 @@ export class Engine {
 
   public async initialize() {
     this.inputManager.initialize();
-    this.clientBounds[0] = this.canvas.width;
-    this.clientBounds[1] = this.canvas.height;
-    this.camera = new Camera(this.gl, this.canvas.width, this.canvas.height);
-    this.spriteRenderer = new SpriteRenderer(this.gl, this.camera);
-    await this.spriteRenderer.initialize();
+    this.camera = new Camera3(this.gl, this.canvas.width, this.canvas.height);
+    // this.spriteRenderer = new SpriteRenderer(this.gl, this.camera);
+    this.renderer = new Renderer2D(this.gl, this.camera)
+    await this.renderer.initialize();
   }
 
   public draw() {
@@ -39,7 +39,7 @@ export class Engine {
     const dt = now - this.lastTime;
     this.lastTime = now;
 
-    this.camera.update();
+    this.camera.updateProjectionView();
 
     this.onUpdate(dt);
 

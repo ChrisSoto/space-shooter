@@ -1,32 +1,48 @@
 import { mat4, vec3 } from "gl-matrix";
 
+export interface CameraTransform {
+  x: number,
+  y: number,
+  rotation: number,
+  zoom: number;
+}
+
 export class Camera3 {
-  private projection: mat4;
-  private view: mat4;
-  public pan: vec3;
-  public zoom: vec3;
-  public rotate: vec3;
+  private transform: CameraTransform;
   constructor(
     public gl: WebGLRenderingContext,
-    public canvas: HTMLCanvasElement) {
-    this.pan = vec3.create();
-    this.zoom = vec3.create();
-    this.rotate = vec3.create();
-    const projection = mat4.create();
-    this.view = mat4.lookAt(mat4.create(), [0, 0, 1], [0, 0, 0], [0, 1, 0]);
-    this.projection = mat4.ortho(projection, 0, this.canvas.clientWidth, this.canvas.clientHeight, 0, -1, 1);
+    public width: number, public height: number) {
+
+    this.transform = {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      zoom: 1,
+    };
+    // const projection = mat4.create();
+    // this.view = mat4.lookAt(mat4.create(), [0, 0, 1], [0, 0, 0], [0, 1, 0]);
+    // this.projection = mat4.ortho(projection, 0, this.canvas.clientWidth, this.canvas.clientHeight, 0, -1, 1);
   }
 
   public updateProjectionView() {
-    mat4.translate(this.projection, this.projection, this.pan);
-    mat4.rotateX(this.projection, this.projection, degToRad(this.rotate[0]));
-    mat4.rotateY(this.projection, this.projection, degToRad(this.rotate[1]));
-    mat4.rotateZ(this.projection, this.projection, degToRad(this.rotate[2]));
-    mat4.scale(this.projection, this.projection, this.zoom);
-    return mat4.mul(mat4.create(), this.projection, this.view);
+    const view = mat4.lookAt(mat4.create(), [0, 0, 1], [0, 0, 0], [0, 1, 0])
+    const projection = mat4.create();
+    mat4.ortho(projection, 0, this.width, this.height, 0, -1, 1);
+    mat4.translate(projection, projection, [this.transform.x, this.transform.y, 0]);
+    mat4.rotateX(projection, projection, 0);
+    mat4.rotateY(projection, projection, 0);
+    mat4.rotateZ(projection, projection, this.degToRad(this.transform.rotation));
+    mat4.scale(projection, projection, [this.transform.zoom, this.transform.zoom, 0]);
+    mat4.invert(projection, projection);
+    return mat4.mul(projection, projection, view);
   }
-}
 
-function degToRad(d: number) {
-  return d * Math.PI / 180;
+  public clear() {
+    this.gl.clearColor(0.9, 0.9, 0.9, 1);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+  }
+
+  private degToRad(d: number) {
+    return d * Math.PI / 180;
+  }
 }

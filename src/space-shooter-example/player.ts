@@ -3,23 +3,21 @@ import { Rect } from "../dinkum/graphics/rect";
 import { Texture } from "../dinkum/graphics/sprite/texture";
 import { InputManager } from "../dinkum/core/input-manager";
 import { Content } from "../dinkum/core/content";
-import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
 import { Sprite } from "../dinkum/graphics/sprite/sprite";
+import { RenderLayer2D } from "../dinkum/core/render-layer2d";
 
 const SPEED = 0.25;
 
 export class Player {
   private movementDirection = vec2.create();
-  public drawRect: Rect;
-  private sourceRect: Rect;
+  public rect: Rect;
   private texture: Texture;
   private sprite: Sprite;
 
   constructor(private inputManager: InputManager, private width: number, private height: number) {
     this.sprite = Content.sprites["playerShip2_red"];
     this.texture = this.sprite.texture;
-    this.drawRect = this.sprite.drawRect.copy();
-    this.sourceRect = this.sprite.sourceRect.copy();
+    this.rect = this.sprite.rect.copy();
   }
 
   public update(dt: number) {
@@ -41,28 +39,27 @@ export class Player {
 
     vec2.normalize(this.movementDirection, this.movementDirection);
     vec2.scale(this.movementDirection, this.movementDirection, SPEED * dt);
-    this.drawRect.x += this.movementDirection[0];
-    this.drawRect.y += this.movementDirection[1];
+    this.rect.x += this.movementDirection[0];
+    this.rect.y += this.movementDirection[1];
 
     this.keepInBounds();
   }
 
-  public draw(spriteRenderer: SpriteRenderer) {
-    // spriteRenderer.drawSprite(this.sprite, this.drawRect)
-    spriteRenderer.drawSprite(this.texture, this.drawRect, this.sourceRect);
+  public draw(renderer: RenderLayer2D) {
+    renderer.drawQuad([this.rect.x, this.rect.y], [this.rect.width, this.rect.height], [1, 1, 1, 1], this.texture);
   }
 
   private keepInBounds() {
-    if (this.drawRect.x < 0) {
-      this.drawRect.x = 0;
-    } else if (this.drawRect.x > this.width - this.drawRect.width) {
-      this.drawRect.x = this.width - this.drawRect.width;
+    if (this.rect.x < 0) {
+      this.rect.x = 0;
+    } else if (this.rect.x > this.width - this.rect.width) {
+      this.rect.x = this.width - this.rect.width;
     }
 
-    if (this.drawRect.y < 0) {
-      this.drawRect.y = 0;
-    } else if (this.drawRect.y > this.height - this.drawRect.height) {
-      this.drawRect.y = this.height - this.drawRect.height;
+    if (this.rect.y < 0) {
+      this.rect.y = 0;
+    } else if (this.rect.y > this.height - this.rect.height) {
+      this.rect.y = this.height - this.rect.height;
     }
   }
 }

@@ -10,7 +10,7 @@ export class Sprite {
   public transform = new Transform();
   constructor(
     public texture: Texture,
-    public drawRect: Rect,
+    public rect: Rect,
     public sourceRect: Rect) {
 
   }
