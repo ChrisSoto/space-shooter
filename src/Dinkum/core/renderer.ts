@@ -17,8 +17,9 @@ export default class Renderer {
   public data = new Float32Array();
   public positionLocation: number;
   public colorLocation: number;
+  public textureLocation: number;
   public layers: { [name: string]: RenderLayer } = {};
-  private testTexture: WebGLTexture;
+  public testTexture: WebGLTexture;
   public camera = {
     x: 0,
     y: 0,
@@ -31,7 +32,7 @@ export default class Renderer {
   constructor(public selector: string) {
     this.canvas = document.getElementById(selector) as HTMLCanvasElement;
     this.gl = this.canvas.getContext("webgl2")!;
-    // this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
+    this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
     this.resize = new Resize(this.gl, 1000, 600);
     this.resize.resizeCanvasToDisplaySize();
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
@@ -45,6 +46,7 @@ export default class Renderer {
     this.viewProjectionMatLocation = this.gl.getUniformLocation(this.program, "uProjectionViewMatrix")!;
     this.positionLocation = this.gl.getAttribLocation(this.program, "aPosition");
     this.colorLocation = this.gl.getAttribLocation(this.program, "aColor");
+    this.textureLocation = this.gl.getAttribLocation(this.program, "aTexCoords");
 
     this.gl.useProgram(this.program);
   }
@@ -79,16 +81,18 @@ export default class Renderer {
   }
 
   public draw(): void {
-    const little = 10;
+    const little = 50;
+    const width = this.canvas.width;
+    const height = this.canvas.height;
     // get textures working
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1000; i++) {
       this.layers['test'].drawQuad(
-        [Math.random() * this.canvas.width, Math.random() * this.canvas.height],
-        [little, little], [Math.random(), Math.random(), Math.random(), 1]);
+        [Math.random() * width, Math.random() * height],
+        [little, little], [1, 1, 1, 1]);
     }
 
-    // this.layers['test'].drawQuad([0, 0], [size, size], [1, 0, 0, 1]);
+    // this.layers['test'].drawQuad([this.canvas.width / 2, this.canvas.height / 2], [300, 300], [1, 1, 1, 1]);
     // this.layers['test'].drawQuad([this.canvas.width - size, 0], [size, size], [0, 1, 0, 1]);
     // this.layers['test'].drawQuad([0, this.canvas.height - size], [size, size], [0, 0, 1, 1]);
     // this.layers['test'].drawQuad([this.canvas.width - size, this.canvas.height - size], [size, size], [1, 0, 1, 1]);
@@ -137,10 +141,13 @@ const renderer = new Renderer("canvas");
 renderer.layers['test'] = new RenderLayer(renderer, BufferType.BATCHED);
 // renderer.layers['batch'] = new RenderLayer(renderer, BufferType.BATCHED);
 
+let i = 0;
+
 const draw = () => {
   renderer.begin();
   renderer.draw();
   renderer.end();
+  i++;
 
   requestAnimationFrame(draw);
 }

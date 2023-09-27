@@ -14,7 +14,7 @@ export class RenderLayer {
   private data!: Float32Array;
   private buffer!: WebGLBuffer;
   private batchCount: number = 0;
-  private FLOATS_PER_VERTEX = 5; // pos (x, y), color (r, g, b)
+  private FLOATS_PER_VERTEX = 7; // pos (x, y), color (r, g, b)
   private FLOATS_PER_SPRITE = 4 * this.FLOATS_PER_VERTEX; // I think there are 4 bytes per sprite vertex
   private INDICES_PER_SPRITE = 6; // two triangles
   private totalSprites = 100;
@@ -36,7 +36,6 @@ export class RenderLayer {
         this.data = new Float32Array((this.FLOATS_PER_SPRITE) * this.totalSprites);
         this.setLayerBuffers();
         this.drawQuad = this.drawQuadBatched
-        // this.renderer.addToEnd(this.drawQuadBatchedPromise())
         break;
       case BufferType.SHARED:
         // shared with who?
@@ -56,77 +55,95 @@ export class RenderLayer {
   public drawQuad = (_position: vec2 | vec3, _size: vec2, _color: vec4, _texture?: Texture) => { }
 
   private quadData(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
-    // top left
+    // bottom left
     this.data[0] = position[0]; // x
     this.data[1] = position[1] + size[1]; // y
-    this.data[2] = color[0]; // r
-    this.data[3] = color[1]; // g
-    this.data[4] = color[2]; // b
+    this.data[2] = 0; // u
+    this.data[3] = 0; // v
+    this.data[4] = color[0]; // r
+    this.data[5] = color[1]; // g
+    this.data[6] = color[2]; // b
 
-    // top right
-    this.data[5] = position[0] + size[0]; // x
-    this.data[6] = position[1] + size[1]; // y
-    this.data[7] = color[0]; // r
-    this.data[8] = color[1]; // g
-    this.data[9] = color[2]; // b
+    // top left
+    this.data[7] = position[0]; // x
+    this.data[8] = position[1]; // y
+    this.data[9] = 0; // u
+    this.data[10] = 1; // v
+    this.data[11] = color[0]; // r
+    this.data[12] = color[1]; // g
+    this.data[13] = color[2]; // b
 
     // bottom right
-    this.data[10] = position[0]; // x
-    this.data[11] = position[1]; // y
-    this.data[12] = color[0]; // r
-    this.data[13] = color[1]; // g
-    this.data[14] = color[2]; // b
+    this.data[14] = position[0] + size[0]; // x
+    this.data[15] = position[1] + size[1]; // y
+    this.data[16] = 1 // u
+    this.data[17] = 0 // v
+    this.data[18] = color[0]; // r
+    this.data[19] = color[1]; // g
+    this.data[20] = color[2]; // b
 
-    // bottom left
-    this.data[15] = position[0] + size[0]; // x
-    this.data[16] = position[1]; // y
-    this.data[17] = color[0]; // r
-    this.data[18] = color[1]; // g
-    this.data[19] = color[2]; // b
+    // top right
+    this.data[21] = position[0] + size[0]; // x
+    this.data[22] = position[1]; // y
+    this.data[23] = 1; // u
+    this.data[24] = 1; // v
+    this.data[25] = color[0]; // r
+    this.data[26] = color[1]; // g
+    this.data[27] = color[2]; // b
   }
 
   private quadDataBatched(position: vec2 | vec3, size: vec2, color: vec4, _texture?: Texture) {
     let i = this.batchCount * this.FLOATS_PER_SPRITE;
-    // top left
+    // bottom left
     this.data[0 + i] = position[0]; // x
     this.data[1 + i] = position[1] + size[1]; // y
-    this.data[2 + i] = color[0]; // r
-    this.data[3 + i] = color[1]; // g
-    this.data[4 + i] = color[2]; // b
+    this.data[2 + i] = 0; // u
+    this.data[3 + i] = 0; // v
+    this.data[4 + i] = color[0]; // r
+    this.data[5 + i] = color[1]; // g
+    this.data[6 + i] = color[2]; // b
 
-    // top right
-    this.data[5 + i] = position[0] + size[0]; // x
-    this.data[6 + i] = position[1] + size[1]; // y
-    this.data[7 + i] = color[0]; // r
-    this.data[8 + i] = color[1]; // g
-    this.data[9 + i] = color[2]; // b
+    // top left
+    this.data[7 + i] = position[0]; // x
+    this.data[8 + i] = position[1]; // y
+    this.data[9 + i] = 0; // u
+    this.data[10 + i] = 1; // v
+    this.data[11 + i] = color[0]; // r
+    this.data[12 + i] = color[1]; // g
+    this.data[13 + i] = color[2]; // b
 
     // bottom right
-    this.data[10 + i] = position[0]; // x
-    this.data[11 + i] = position[1]; // y
-    this.data[12 + i] = color[0]; // r
-    this.data[13 + i] = color[1]; // g
-    this.data[14 + i] = color[2]; // b
+    this.data[14 + i] = position[0] + size[0]; // x
+    this.data[15 + i] = position[1] + size[1]; // y
+    this.data[16 + i] = 1 // u
+    this.data[17 + i] = 0 // v
+    this.data[18 + i] = color[0]; // r
+    this.data[19 + i] = color[1]; // g
+    this.data[20 + i] = color[2]; // b
 
-    // bottom left
-    this.data[15 + i] = position[0] + size[0]; // x
-    this.data[16 + i] = position[1]; // y
-    this.data[17 + i] = color[0]; // r
-    this.data[18 + i] = color[1]; // g
-    this.data[19 + i] = color[2]; // b
-
+    // top right
+    this.data[21 + i] = position[0] + size[0]; // x
+    this.data[22 + i] = position[1]; // y
+    this.data[23 + i] = 1; // u
+    this.data[24 + i] = 1; // v
+    this.data[25 + i] = color[0]; // r
+    this.data[26 + i] = color[1]; // g
+    this.data[27 + i] = color[2]; // b
   }
 
   private setLayerBuffers() {
     this.setBuffer();
-
-    const stride = 2 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
-
-    this.renderer.gl.vertexAttribPointer(this.renderer.positionLocation, 2, this.renderer.gl.FLOAT, false, stride, 0);
-    this.renderer.gl.vertexAttribPointer(this.renderer.colorLocation, 3, this.renderer.gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
-
+    this.setVertexAttribPointers();
     this.renderer.gl.enableVertexAttribArray(this.renderer.positionLocation);
     this.renderer.gl.enableVertexAttribArray(this.renderer.colorLocation);
+    this.renderer.gl.enableVertexAttribArray(this.renderer.textureLocation);
+  }
+
+  private setVertexAttribPointers() {
+    const stride = 2 * Float32Array.BYTES_PER_ELEMENT + 2 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
+    this.renderer.gl.vertexAttribPointer(this.renderer.positionLocation, 2, this.renderer.gl.FLOAT, false, stride, 0);
+    this.renderer.gl.vertexAttribPointer(this.renderer.colorLocation, 3, this.renderer.gl.FLOAT, false, stride, 4 * Float32Array.BYTES_PER_ELEMENT);
+    this.renderer.gl.vertexAttribPointer(this.renderer.textureLocation, 2, this.renderer.gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT)
   }
 
   private setBuffer() {
@@ -179,9 +196,7 @@ export class RenderLayer {
 
       this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalSprites);
       this.setBuffer();
-      const stride = 2 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
-      this.renderer.gl.vertexAttribPointer(this.renderer.positionLocation, 2, this.renderer.gl.FLOAT, false, stride, 0);
-      this.renderer.gl.vertexAttribPointer(this.renderer.colorLocation, 3, this.renderer.gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
+      this.setVertexAttribPointers();
     }
 
     this.batchCount = 0;
