@@ -69,39 +69,6 @@ export default class Renderer2D {
     // this.layers['test'].drawQuad([0, this.canvas.height - size], [size, size], [0, 0, 1, 1]);
     // this.layers['test'].drawQuad([this.canvas.width - size, this.canvas.height - size], [size, size], [1, 0, 1, 1]);
   }
-
-
-  private loadTexture(uri: string): WebGLTexture {
-    const texture = this.gl.createTexture()!;
-    this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-
-    this.gl.texImage2D(this.gl.TEXTURE_2D,
-      0,
-      this.gl.RGBA,
-      1, // width
-      1, // height
-      0, // border
-      this.gl.RGBA,
-      this.gl.UNSIGNED_BYTE,
-      new Uint8Array([255, 0, 255, 255]));
-
-    const image = new Image();
-    image.onload = () => {
-      this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-      this.gl.texImage2D(this.gl.TEXTURE_2D,
-        0,
-        this.gl.RGBA,
-        this.gl.RGBA,
-        this.gl.UNSIGNED_BYTE,
-        image);
-      this.gl.generateMipmap(this.gl.TEXTURE_2D);
-
-    }
-    image.src = uri;
-
-    return texture;
-
-  }
 }
 
 // const renderer = new Renderer2D("canvas");

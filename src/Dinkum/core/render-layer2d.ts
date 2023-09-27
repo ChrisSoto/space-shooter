@@ -1,8 +1,8 @@
-import { vec2, vec3, vec4 } from "gl-matrix";
-import { Texture } from "../graphics/sprite/texture";
-import Renderer from "./renderer";
+import { vec4 } from "gl-matrix";
 import { BufferUtil } from "../graphics/buffer-util";
 import Renderer2D from "./renderer2d";
+import { Rect } from "../graphics/rect";
+import { Sprite } from "../graphics/sprite/sprite";
 
 export enum BufferType {
   NORMAL = 'NORMAL',
@@ -15,7 +15,6 @@ export class RenderLayer2D {
   private data!: Float32Array;
   private buffer!: WebGLBuffer;
   private batchCount: number = 0;
-  private currentTexture!: Texture;
   // constants
   private FLOATS_PER_VERTEX = 7; // pos (x, y), color (r, g, b)
   private FLOATS_PER_SPRITE = 4 * this.FLOATS_PER_VERTEX; // I think there are 4 bytes per sprite vertex
@@ -34,11 +33,13 @@ export class RenderLayer2D {
         this.data = new Float32Array(this.FLOATS_PER_SPRITE);
         this.setLayerBuffers();
         this.drawQuad = this.drawQuadNormal
+        this.drawSprite = this.drawSpriteNormal
         break;
       case BufferType.BATCHED:
         this.data = new Float32Array((this.FLOATS_PER_SPRITE) * this.totalSprites);
         this.setLayerBuffers();
         this.drawQuad = this.drawQuadBatched
+        this.drawSprite = this.drawSpriteBatched
         break;
       case BufferType.SHARED:
         // shared with who?
@@ -55,18 +56,17 @@ export class RenderLayer2D {
     }
   }
 
-  private setTexture(texture: Texture) {
-    this.renderer.gl.bindTexture(this.renderer.gl.TEXTURE_2D, texture.texture);
-    this.currentTexture = texture;
+  private setSprite(texture: WebGLTexture) {
+    this.renderer.gl.bindTexture(this.renderer.gl.TEXTURE_2D, texture);
   }
 
-  public drawQuad = (_position: vec2 | vec3, _size: vec2, _color: vec4, texture: Texture) => { }
+  public drawQuad = (_rect: Rect, _color: vec4) => { }
+  public drawSprite = (_rect: Rect, _color: vec4, _sprite: Sprite) => { }
 
-  private quadData(position: vec2 | vec3, size: vec2, color: vec4, texture: Texture) {
-    this.setTexture(texture)
+  private quadDataNormal(rect: Rect, color: vec4) {
     // bottom left
-    this.data[0] = position[0]; // x
-    this.data[1] = position[1] + size[1]; // y
+    this.data[0] = rect.x; // x
+    this.data[1] = rect.y + rect.height; // y
     this.data[2] = 0; // u
     this.data[3] = 0; // v
     this.data[4] = color[0]; // r
@@ -74,8 +74,8 @@ export class RenderLayer2D {
     this.data[6] = color[2]; // b
 
     // top left
-    this.data[7] = position[0]; // x
-    this.data[8] = position[1]; // y
+    this.data[7] = rect.x; // x
+    this.data[8] = rect.y; // y
     this.data[9] = 0; // u
     this.data[10] = 1; // v
     this.data[11] = color[0]; // r
@@ -83,8 +83,8 @@ export class RenderLayer2D {
     this.data[13] = color[2]; // b
 
     // bottom right
-    this.data[14] = position[0] + size[0]; // x
-    this.data[15] = position[1] + size[1]; // y
+    this.data[14] = rect.x + rect.width; // x
+    this.data[15] = rect.y + rect.height; // y
     this.data[16] = 1 // u
     this.data[17] = 0 // v
     this.data[18] = color[0]; // r
@@ -92,8 +92,8 @@ export class RenderLayer2D {
     this.data[20] = color[2]; // b
 
     // top right
-    this.data[21] = position[0] + size[0]; // x
-    this.data[22] = position[1]; // y
+    this.data[21] = rect.x + rect.width; // x
+    this.data[22] = rect.y; // y
     this.data[23] = 1; // u
     this.data[24] = 1; // v
     this.data[25] = color[0]; // r
@@ -101,12 +101,11 @@ export class RenderLayer2D {
     this.data[27] = color[2]; // b
   }
 
-  private quadDataBatched(position: vec2 | vec3, size: vec2, color: vec4, texture: Texture) {
-    this.setTexture(texture)
+  private quadDataBatched(rect: Rect, color: vec4) {
     let i = this.batchCount * this.FLOATS_PER_SPRITE;
     // bottom left
-    this.data[0 + i] = position[0]; // x
-    this.data[1 + i] = position[1] + size[1]; // y
+    this.data[0 + i] = rect.x; // x
+    this.data[1 + i] = rect.y + rect.height; // y
     this.data[2 + i] = 0; // u
     this.data[3 + i] = 0; // v
     this.data[4 + i] = color[0]; // r
@@ -114,8 +113,8 @@ export class RenderLayer2D {
     this.data[6 + i] = color[2]; // b
 
     // top left
-    this.data[7 + i] = position[0]; // x
-    this.data[8 + i] = position[1]; // y
+    this.data[7 + i] = rect.x; // x
+    this.data[8 + i] = rect.y; // y
     this.data[9 + i] = 0; // u
     this.data[10 + i] = 1; // v
     this.data[11 + i] = color[0]; // r
@@ -123,8 +122,8 @@ export class RenderLayer2D {
     this.data[13 + i] = color[2]; // b
 
     // bottom right
-    this.data[14 + i] = position[0] + size[0]; // x
-    this.data[15 + i] = position[1] + size[1]; // y
+    this.data[14 + i] = rect.x + rect.width; // x
+    this.data[15 + i] = rect.y + rect.height; // y
     this.data[16 + i] = 1 // u
     this.data[17 + i] = 0 // v
     this.data[18 + i] = color[0]; // r
@@ -132,8 +131,94 @@ export class RenderLayer2D {
     this.data[20 + i] = color[2]; // b
 
     // top right
-    this.data[21 + i] = position[0] + size[0]; // x
-    this.data[22 + i] = position[1]; // y
+    this.data[21 + i] = rect.x + rect.width; // x
+    this.data[22 + i] = rect.y; // y
+    this.data[23 + i] = 1; // u
+    this.data[24 + i] = 1; // v
+    this.data[25 + i] = color[0]; // r
+    this.data[26 + i] = color[1]; // g
+    this.data[27 + i] = color[2]; // b
+  }
+
+  private spriteDataNormal(rect: Rect, color: vec4, sprite: Sprite) {
+    this.setSprite(sprite.texture.texture)
+
+    const u0 = sprite.sourceRect.x / sprite.texture.width;
+    const v0 = 1 - (sprite.sourceRect.y / sprite.texture.height);
+
+    const u1 = (sprite.sourceRect.x + sprite.sourceRect.width) / sprite.texture.width;
+    const v1 = 1 - (sprite.sourceRect.y + sprite.sourceRect.height) / sprite.texture.height;
+
+    // bottom left
+    this.data[0] = rect.x; // x
+    this.data[1] = rect.y + rect.height; // y
+    this.data[2] = u1; // u
+    this.data[3] = v1; // v
+    this.data[4] = color[0]; // r
+    this.data[5] = color[1]; // g
+    this.data[6] = color[2]; // b
+
+    // top left
+    this.data[7] = rect.x; // x
+    this.data[8] = rect.y; // y
+    this.data[9] = u1; // u
+    this.data[10] = v0; // v
+    this.data[11] = color[0]; // r
+    this.data[12] = color[1]; // g
+    this.data[13] = color[2]; // b
+
+    // bottom right
+    this.data[14] = rect.x + rect.width; // x
+    this.data[15] = rect.y + rect.height; // y
+    this.data[16] = u0 // u
+    this.data[17] = v1 // v
+    this.data[18] = color[0]; // r
+    this.data[19] = color[1]; // g
+    this.data[20] = color[2]; // b
+
+    // top right
+    this.data[21] = rect.x + rect.width; // x
+    this.data[22] = rect.y; // y
+    this.data[23] = u0; // u
+    this.data[24] = v0; // v
+    this.data[25] = color[0]; // r
+    this.data[26] = color[1]; // g
+    this.data[27] = color[2]; // b
+  }
+
+  private spriteDataBatched(rect: Rect, color: vec4, sprite: Sprite) {
+    this.setSprite(sprite.texture.texture)
+    let i = this.batchCount * this.FLOATS_PER_SPRITE;
+    // bottom left
+    this.data[0 + i] = rect.x; // x
+    this.data[1 + i] = rect.y + rect.height; // y
+    this.data[2 + i] = 0; // u
+    this.data[3 + i] = 0; // v
+    this.data[4 + i] = color[0]; // r
+    this.data[5 + i] = color[1]; // g
+    this.data[6 + i] = color[2]; // b
+
+    // top left
+    this.data[7 + i] = rect.x; // x
+    this.data[8 + i] = rect.y; // y
+    this.data[9 + i] = 0; // u
+    this.data[10 + i] = 1; // v
+    this.data[11 + i] = color[0]; // r
+    this.data[12 + i] = color[1]; // g
+    this.data[13 + i] = color[2]; // b
+
+    // bottom right
+    this.data[14 + i] = rect.x + rect.width; // x
+    this.data[15 + i] = rect.y + rect.height; // y
+    this.data[16 + i] = 1 // u
+    this.data[17 + i] = 0 // v
+    this.data[18 + i] = color[0]; // r
+    this.data[19 + i] = color[1]; // g
+    this.data[20 + i] = color[2]; // b
+
+    // top right
+    this.data[21 + i] = rect.x + rect.width; // x
+    this.data[22 + i] = rect.y; // y
     this.data[23 + i] = 1; // u
     this.data[24 + i] = 1; // v
     this.data[25 + i] = color[0]; // r
@@ -182,14 +267,25 @@ export class RenderLayer2D {
     this.renderer.gl.bindBuffer(this.renderer.gl.ELEMENT_ARRAY_BUFFER, buffer);
   }
 
-  private drawQuadNormal(position: vec2 | vec3, size: vec2, color: vec4, texture: Texture) {
-    this.quadData(position, size, color, texture);
+  private drawQuadNormal(rect: Rect, color: vec4) {
+    this.quadDataNormal(rect, color);
     this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
     this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE, this.renderer.gl.UNSIGNED_SHORT, 0);
   }
 
-  private drawQuadBatched(position: vec2 | vec3, size: vec2, color: vec4, texture: Texture) {
-    this.quadDataBatched(position, size, color, texture);
+  private drawQuadBatched(rect: Rect, color: vec4) {
+    this.quadDataBatched(rect, color);
+    this.batchCount++;
+  }
+
+  private drawSpriteNormal(rect: Rect, color: vec4, sprite: Sprite) {
+    this.spriteDataNormal(rect, color, sprite);
+    this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
+    this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE, this.renderer.gl.UNSIGNED_SHORT, 0);
+  }
+
+  private drawSpriteBatched(rect: Rect, color: vec4, sprite: Sprite) {
+    this.spriteDataBatched(rect, color, sprite);
     this.batchCount++;
   }
 

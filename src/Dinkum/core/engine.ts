@@ -1,7 +1,5 @@
 
-import { vec2 } from "gl-matrix";
 import { InputManager } from "./input-manager";
-import { SpriteRenderer } from "../graphics/sprite/sprite-renderer";
 import Renderer2D from "./renderer2d";
 import { Camera3 } from "../camera/camera3";
 
@@ -21,14 +19,13 @@ export class Engine {
 
   constructor(private canvasId: string) {
     this.canvas = document.getElementById(this.canvasId) as HTMLCanvasElement;
-    this.gl = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
+    this.gl = this.canvas.getContext('webgl2', { alpha: true }) as WebGL2RenderingContext;
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
   }
 
   public async initialize() {
     this.inputManager.initialize();
     this.camera = new Camera3(this.gl, this.canvas.width, this.canvas.height);
-    // this.spriteRenderer = new SpriteRenderer(this.gl, this.camera);
     this.renderer = new Renderer2D(this.gl, this.camera)
     await this.renderer.initialize();
   }

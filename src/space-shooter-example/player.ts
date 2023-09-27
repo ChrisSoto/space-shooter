@@ -11,12 +11,10 @@ const SPEED = 0.25;
 export class Player {
   private movementDirection = vec2.create();
   public rect: Rect;
-  private texture: Texture;
   private sprite: Sprite;
 
   constructor(private inputManager: InputManager, private width: number, private height: number) {
-    this.sprite = Content.sprites["playerShip2_red"];
-    this.texture = this.sprite.texture;
+    this.sprite = Content.sprites["playerShip1_green"];
     this.rect = this.sprite.rect.copy();
   }
 
@@ -46,7 +44,7 @@ export class Player {
   }
 
   public draw(renderer: RenderLayer2D) {
-    renderer.drawQuad([this.rect.x, this.rect.y], [this.rect.width, this.rect.height], [1, 1, 1, 1], this.texture);
+    renderer.drawSprite(this.rect, [1, 1, 1, 1], this.sprite);
   }
 
   private keepInBounds() {

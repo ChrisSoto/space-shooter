@@ -24,8 +24,8 @@ export class Content {
     const texture = await Texture.loadTexture(gl, url);
     const width = texture.width;
     const height = texture.height;
-    const drawRect = new Rect(0, 0, width, height);
-    const srcRect = new Rect(0, 0, width, height);
+    const drawRect = new Rect(0, 0, 0, width, height);
+    const srcRect = new Rect(0, 0, 0, width, height);
 
     this.sprites[key] = new Sprite(texture, drawRect, srcRect);
   }
@@ -58,8 +58,8 @@ export class Content {
         const width = parseInt(texture.getAttribute("width")!)
         const height = parseInt(texture.getAttribute("height")!)
 
-        const drawRect = new Rect(0, 0, width, height);
-        const srcRect = new Rect(x, y, width, height);
+        const drawRect = new Rect(0, 0, 0, width, height);
+        const srcRect = new Rect(x, y, 0, width, height);
 
         this.sprites[name] = new Sprite(spritesheet.texture, drawRect, srcRect);
       });
@@ -76,21 +76,4 @@ export class Content {
       reject('Error')
     });
   }
-
-  // private static async loadSpriteSheet() {
-  //   const xmlDoc = await this.loadXmlDoc("assets/Spritesheet/sheet.xml");
-  //   xmlDoc.querySelectorAll("SubTexture")
-  //     .forEach((texture) => {
-  //       const name = texture.getAttribute("name")!.replace(".png", "");
-  //       const x = parseInt(texture.getAttribute("x")!)
-  //       const y = parseInt(texture.getAttribute("y")!)
-  //       const width = parseInt(texture.getAttribute("width")!)
-  //       const height = parseInt(texture.getAttribute("height")!)
-
-  //       const drawRect = new Rect(0, 0, width, height);
-  //       const srcRect = new Rect(x, y, width, height);
-
-  //       this.sprites[name] = new Sprite(this.spriteSheet, drawRect, srcRect);
-  //     })
-  // }
 }
