@@ -1,6 +1,5 @@
 import { vec2 } from "gl-matrix";
 import { Rect } from "../dinkum/graphics/rect";
-import { Texture } from "../dinkum/graphics/sprite/texture";
 import { InputManager } from "../dinkum/core/input-manager";
 import { Content } from "../dinkum/core/content";
 import { Sprite } from "../dinkum/graphics/sprite/sprite";
@@ -14,7 +13,7 @@ export class Player {
   private sprite: Sprite;
 
   constructor(private inputManager: InputManager, private width: number, private height: number) {
-    this.sprite = Content.sprites["playerShip1_green"];
+    this.sprite = Content.sprites["playerShip1_red"];
     this.rect = this.sprite.rect.copy();
   }
 

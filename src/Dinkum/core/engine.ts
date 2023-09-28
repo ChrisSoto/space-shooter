@@ -19,7 +19,7 @@ export class Engine {
 
   constructor(private canvasId: string) {
     this.canvas = document.getElementById(this.canvasId) as HTMLCanvasElement;
-    this.gl = this.canvas.getContext('webgl2', { alpha: true }) as WebGL2RenderingContext;
+    this.gl = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
   }
 

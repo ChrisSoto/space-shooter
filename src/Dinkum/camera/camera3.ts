@@ -39,7 +39,9 @@ export class Camera3 {
 
   public clear() {
     this.gl.clearColor(0.9, 0.9, 0.9, 1);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    this.gl.enable(this.gl.BLEND);
+    this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA)
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
   }
 
   private degToRad(d: number) {

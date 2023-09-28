@@ -56,3 +56,17 @@ Want to limit the size of the mental model you need to think about code
 - technology trickles down from art?
 - animal skin -> wood -> stone -> bronze -> iron -> modern
 - nomadic sheperds -> sheperds w/ agriculture -> institutionalized food
+
+
+I think a good idea is to use the "AI Behavior Tree" of a character and treat it as it's "DNA" that represents their "person".
+
+The DNA updates quickly as a child via some sort of NEAT variant + GA
+
+This creates a nature v nurture reality for the character as half of who the character is determined
+by their parents and half determined by their early life.
+
+It can triggering an epigenitc response (DNA change) during a traumatic experience 
+
+As an adult it mostly stays the same
+
+All characters are subject to medling by evil spirits that can never infect more than 95% of the population... not sure how this works
