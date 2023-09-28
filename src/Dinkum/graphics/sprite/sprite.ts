@@ -1,4 +1,3 @@
-import { Transform } from "../../transform";
 import { Rect } from "../rect";
 import { Texture } from "./texture";
 
@@ -7,7 +6,6 @@ import { Texture } from "./texture";
 // aren't capable of being changed in texture only.
 
 export class Sprite {
-  public transform = new Transform();
   constructor(
     public texture: Texture,
     public rect: Rect,

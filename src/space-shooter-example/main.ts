@@ -23,7 +23,6 @@ engine.initialize()
 
     // update movement
     engine.onUpdate = (dt: number) => {
-      resize.resizeCanvasToDisplaySize();
       // background.update(dt);
       player.update(dt);
       // enemyManager.update(dt);

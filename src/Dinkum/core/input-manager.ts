@@ -1,6 +1,6 @@
 export class InputManager {
 
-  private keydown: { [key: string]: boolean } = {};
+  public keydown: { [key: string]: boolean } = {};
 
   public initialize() {
     window.addEventListener("keydown", e => this.keydown[e.key] = true);

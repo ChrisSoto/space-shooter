@@ -35,7 +35,7 @@ export class Engine {
     const now = performance.now();
     const dt = now - this.lastTime;
     this.lastTime = now;
-
+    this.camera.update(this.inputManager, dt);
     this.camera.updateProjectionView();
 
     this.onUpdate(dt);

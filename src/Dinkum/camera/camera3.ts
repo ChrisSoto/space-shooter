@@ -1,4 +1,5 @@
-import { mat4, vec3 } from "gl-matrix";
+import { mat4 } from "gl-matrix";
+import { InputManager } from "../core/input-manager";
 
 export interface CameraTransform {
   x: number,
@@ -22,6 +23,28 @@ export class Camera3 {
     // const projection = mat4.create();
     // this.view = mat4.lookAt(mat4.create(), [0, 0, 1], [0, 0, 0], [0, 1, 0]);
     // this.projection = mat4.ortho(projection, 0, this.canvas.clientWidth, this.canvas.clientHeight, 0, -1, 1);
+  }
+
+  public update(inputManager: InputManager, dt: number) {
+    if (inputManager.isKeyDown("w")) {
+      this.transform.y += -1 * dt;
+    }
+    if (inputManager.isKeyDown("s")) {
+      this.transform.y += 1 * dt;
+    }
+    if (inputManager.isKeyDown("a")) {
+      this.transform.x += -1 * dt;
+    }
+    if (inputManager.isKeyDown("d")) {
+      this.transform.x += 1 * dt;
+    }
+
+    if (inputManager.isKeyDown("z")) {
+      this.transform.zoom += 0.01 * dt;
+    }
+    if (inputManager.isKeyDown("x")) {
+      this.transform.zoom += -0.01 * dt;
+    }
   }
 
   public updateProjectionView() {
