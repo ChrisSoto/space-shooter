@@ -10,45 +10,38 @@ export interface CameraTransform {
 
 export class Camera3 {
   private transform: CameraTransform;
+  private view!: mat4;
+  public projectionViewMatrix!: mat4;
   constructor(
     public gl: WebGLRenderingContext,
     public width: number, public height: number) {
-
+    this.view = mat4.lookAt(mat4.create(), [0, 0, 1], [0, 0, 0], [0, 1, 0]);
+    this.projectionViewMatrix = mat4.create();
     this.transform = {
       x: 0,
       y: 0,
       rotation: 0,
       zoom: 1,
     };
-    // const projection = mat4.create();
-    // this.view = mat4.lookAt(mat4.create(), [0, 0, 1], [0, 0, 0], [0, 1, 0]);
-    // this.projection = mat4.ortho(projection, 0, this.canvas.clientWidth, this.canvas.clientHeight, 0, -1, 1);
   }
 
   public update(inputManager: InputManager, dt: number) {
-    if (inputManager.isKeyDown("w")) {
-      this.transform.y += -1 * dt;
-    }
-    if (inputManager.isKeyDown("s")) {
-      this.transform.y += 1 * dt;
-    }
-    if (inputManager.isKeyDown("a")) {
-      this.transform.x += -1 * dt;
-    }
-    if (inputManager.isKeyDown("d")) {
-      this.transform.x += 1 * dt;
+    if (inputManager.mouseDown) {
+      this.transform.y = inputManager.mouse[1];
+      this.transform.x = inputManager.mouse[0];
     }
 
-    if (inputManager.isKeyDown("z")) {
+    if (inputManager.wheel.forward) {
       this.transform.zoom += 0.01 * dt;
+      inputManager.wheel.forward = false;
     }
-    if (inputManager.isKeyDown("x")) {
+    if (inputManager.wheel.backward) {
       this.transform.zoom += -0.01 * dt;
+      inputManager.wheel.backward = false;
     }
   }
 
   public updateProjectionView() {
-    const view = mat4.lookAt(mat4.create(), [0, 0, 1], [0, 0, 0], [0, 1, 0])
     const projection = mat4.create();
     mat4.ortho(projection, 0, this.width, this.height, 0, -1, 1);
     mat4.translate(projection, projection, [this.transform.x, this.transform.y, 0]);
@@ -57,7 +50,7 @@ export class Camera3 {
     mat4.rotateZ(projection, projection, this.degToRad(this.transform.rotation));
     mat4.scale(projection, projection, [this.transform.zoom, this.transform.zoom, 0]);
     mat4.invert(projection, projection);
-    return mat4.mul(projection, projection, view);
+    mat4.mul(this.projectionViewMatrix, projection, this.view);
   }
 
   public clear() {

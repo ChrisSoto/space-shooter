@@ -11,7 +11,7 @@ import { Texture } from "../graphics/sprite/texture";
 
 export default class Renderer2D {
   private program: WebGLProgram;
-  private viewProjectionMatLocation: WebGLUniformLocation;
+  private projectionViewMatrixLocation: WebGLUniformLocation;
   public data = new Float32Array();
   public positionLocation: number;
   public colorLocation: number;
@@ -27,7 +27,7 @@ export default class Renderer2D {
     const fragmentShader = ProgramUtil.createShader(this.gl, this.gl.FRAGMENT_SHADER, fragmentShaderSource)!;
     this.program = ProgramUtil.createProgram(this.gl, vertexShader, fragmentShader)!;
 
-    this.viewProjectionMatLocation = this.gl.getUniformLocation(this.program, "uProjectionViewMatrix")!;
+    this.projectionViewMatrixLocation = this.gl.getUniformLocation(this.program, "uProjectionViewMatrix")!;
     this.positionLocation = this.gl.getAttribLocation(this.program, "aPosition");
     this.colorLocation = this.gl.getAttribLocation(this.program, "aColor");
     this.textureLocation = this.gl.getAttribLocation(this.program, "aTexCoords");
@@ -40,8 +40,7 @@ export default class Renderer2D {
   }
 
   public begin() {
-    const projection = this.camera.updateProjectionView();
-    this.gl.uniformMatrix4fv(this.viewProjectionMatLocation, false, projection);
+    this.gl.uniformMatrix4fv(this.projectionViewMatrixLocation, false, this.camera.projectionViewMatrix);
   }
 
   public end() {

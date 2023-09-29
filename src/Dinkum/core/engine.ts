@@ -19,12 +19,12 @@ export class Engine {
 
   constructor(private canvasId: string) {
     this.canvas = document.getElementById(this.canvasId) as HTMLCanvasElement;
-    this.gl = this.canvas.getContext('webgl2', { alpha: false }) as WebGL2RenderingContext;
+    this.gl = this.canvas.getContext('webgl2', { alpha: true }) as WebGL2RenderingContext;
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
   }
 
   public async initialize() {
-    this.inputManager.initialize();
+    this.inputManager.initialize(this.canvas);
     this.camera = new Camera3(this.gl, this.canvas.width, this.canvas.height);
     this.renderer = new Renderer2D(this.gl, this.camera)
     await this.renderer.initialize();
@@ -36,6 +36,7 @@ export class Engine {
     const dt = now - this.lastTime;
     this.lastTime = now;
     this.camera.update(this.inputManager, dt);
+
     this.camera.updateProjectionView();
 
     this.onUpdate(dt);
