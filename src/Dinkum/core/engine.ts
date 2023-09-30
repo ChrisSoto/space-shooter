@@ -2,6 +2,7 @@
 import { InputManager } from "./input-manager";
 import Renderer2D from "./renderer2d";
 import { Camera3 } from "../camera/camera3";
+import { CameraInputManager } from "./camera-input-manager";
 
 
 export class Engine {
@@ -10,9 +11,9 @@ export class Engine {
   private lastTime = 0;
   // public spriteRenderer!: SpriteRenderer;
   public renderer!: Renderer2D;
-  public inputManager = new InputManager();
   public camera!: Camera3;
-
+  public inputManager = new InputManager();
+  public cameraInputManager = new CameraInputManager();
 
   public onUpdate = (_dt: number) => { };
   public onDraw = () => { };
@@ -24,10 +25,10 @@ export class Engine {
   }
 
   public async initialize() {
-    this.inputManager.initialize(this.canvas);
     this.camera = new Camera3(this.gl, this.canvas.width, this.canvas.height);
     this.renderer = new Renderer2D(this.gl, this.camera)
     await this.renderer.initialize();
+    this.cameraInputManager.initialize(this.canvas, this.inputManager, this.camera);
   }
 
   public draw() {
@@ -35,7 +36,7 @@ export class Engine {
     const now = performance.now();
     const dt = now - this.lastTime;
     this.lastTime = now;
-    this.camera.update(this.inputManager, dt);
+    this.camera.update(this.inputManager, this.cameraInputManager, dt);
 
     this.camera.updateProjectionView();
 

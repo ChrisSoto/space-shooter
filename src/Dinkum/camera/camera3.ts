@@ -1,5 +1,6 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec2 } from "gl-matrix";
 import { InputManager } from "../core/input-manager";
+import { CameraInputManager } from "../core/camera-input-manager";
 
 export interface CameraTransform {
   x: number,
@@ -9,14 +10,17 @@ export interface CameraTransform {
 }
 
 export class Camera3 {
-  private transform: CameraTransform;
+  public transform: CameraTransform;
   private view!: mat4;
   public projectionViewMatrix!: mat4;
+  private projection!: mat4;
   constructor(
     public gl: WebGLRenderingContext,
     public width: number, public height: number) {
+    this.projection = mat4.create();
     this.view = mat4.lookAt(mat4.create(), [0, 0, 1], [0, 0, 0], [0, 1, 0]);
     this.projectionViewMatrix = mat4.create();
+
     this.transform = {
       x: 0,
       y: 0,
@@ -25,10 +29,13 @@ export class Camera3 {
     };
   }
 
-  public update(inputManager: InputManager, dt: number) {
-    if (inputManager.mouseDown) {
-      this.transform.y = inputManager.mouse[1];
-      this.transform.x = inputManager.mouse[0];
+  public update(inputManager: InputManager, cameraInputManager: CameraInputManager, dt: number) {
+
+
+    if (inputManager.panActive) {
+      const pan = cameraInputManager.pan();
+      this.transform.x = pan[0];
+      this.transform.y = pan[1];
     }
 
     if (inputManager.wheel.forward) {
@@ -42,15 +49,16 @@ export class Camera3 {
   }
 
   public updateProjectionView() {
-    const projection = mat4.create();
-    mat4.ortho(projection, 0, this.width, this.height, 0, -1, 1);
-    mat4.translate(projection, projection, [this.transform.x, this.transform.y, 0]);
-    mat4.rotateX(projection, projection, 0);
-    mat4.rotateY(projection, projection, 0);
-    mat4.rotateZ(projection, projection, this.degToRad(this.transform.rotation));
-    mat4.scale(projection, projection, [this.transform.zoom, this.transform.zoom, 0]);
-    mat4.invert(projection, projection);
-    mat4.mul(this.projectionViewMatrix, projection, this.view);
+
+    mat4.ortho(this.projection, 0, this.width, this.height, 0, -1, 1);
+    mat4.translate(this.projection, this.projection, [this.transform.x, this.transform.y, 0]);
+    // mat4.translate(projection, projection, [this.transform.x, this.transform.y, 0]);
+    // mat4.rotateX(projection, projection, 0);
+    // mat4.rotateY(projection, projection, 0);
+    // mat4.rotateZ(projection, projection, this.degToRad(this.transform.rotation));
+    // mat4.scale(projection, projection, [this.transform.zoom, this.transform.zoom, 0]);
+    // mat4.invert(projection, projection);
+    mat4.mul(this.projectionViewMatrix, this.projection, this.view);
   }
 
   public clear() {
