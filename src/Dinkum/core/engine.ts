@@ -1,7 +1,7 @@
 
 import { InputManager } from "./input-manager";
-import Renderer2D from "./renderer2d";
-import { Camera3 } from "../camera/camera3";
+import Renderer2D from "./renderer";
+import { Camera3 } from "../camera/camera";
 import { CameraInputManager } from "./camera-input-manager";
 
 
@@ -36,8 +36,7 @@ export class Engine {
     const now = performance.now();
     const dt = now - this.lastTime;
     this.lastTime = now;
-    this.camera.update(this.inputManager, this.cameraInputManager, dt);
-
+    this.camera.update(this.inputManager, this.cameraInputManager)
     this.camera.updateProjectionView();
 
     this.onUpdate(dt);
