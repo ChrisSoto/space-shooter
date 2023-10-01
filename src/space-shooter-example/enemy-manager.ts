@@ -1,4 +1,4 @@
-import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
+import { SpriteRenderer } from "../old_dinkum_stuff/sprite-renderer";
 import { BulletManager } from "./bullet-manager";
 import { Enemy } from "./enemy";
 import { ExplosionManager } from "./explosion-manager";

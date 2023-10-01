@@ -1,11 +1,11 @@
 import vertexShaderSource from "../shaders/vshader.glsl?raw";
 import fragmentShaderSource from "../shaders/fshader.glsl?raw";
-import { Camera } from "../../camera/camera";
-import { ProgramUtil } from "../program-util";
-import { BufferUtil } from "../buffer-util";
-import { Texture } from "./texture";
-import { Rect } from "../rect";
-import { Color } from "../color";
+import { Camera } from "../dinkum/camera/camera";
+import { ProgramUtil } from "../dinkum/graphics/program-util";
+import { BufferUtil } from "../dinkum/graphics/buffer-util";
+import { Texture } from "../dinkum/graphics/sprite/texture";
+import { Rect } from "../dinkum/graphics/rect";
+import { Color } from "../dinkum/graphics/color";
 import { vec2 } from "gl-matrix";
 
 const MAX_NUMBER_OF_SPRITES = 1000;
@@ -118,14 +118,14 @@ export class SpriteRenderer {
   }
 
   private setRectCoords(rect: Rect) {
-    this.v0[0] = rect.x;
-    this.v0[1] = rect.y;
-    this.v1[0] = rect.x + rect.width;
-    this.v1[1] = rect.y;
-    this.v2[0] = rect.x + rect.width;
-    this.v2[1] = rect.y + rect.height;
-    this.v3[0] = rect.x;
-    this.v3[1] = rect.y + rect.height;
+    this.v0[0] = rect.x; // a
+    this.v0[1] = rect.y; // a
+    this.v1[0] = rect.x + rect.width; // b
+    this.v1[1] = rect.y; // b
+    this.v2[0] = rect.x + rect.width; // c
+    this.v2[1] = rect.y + rect.height; // c
+    this.v3[0] = rect.x; // d
+    this.v3[1] = rect.y + rect.height; // d
   }
 
   setRotation(rotation: number, rect: Rect, origin: vec2 | null) {

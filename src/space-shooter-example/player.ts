@@ -3,7 +3,8 @@ import { Rect } from "../dinkum/graphics/rect";
 import { InputManager } from "../dinkum/core/input-manager";
 import { Content } from "../dinkum/core/content";
 import { Sprite } from "../dinkum/graphics/sprite/sprite";
-import { RenderLayer2D } from "../dinkum/core/render-layer2d";
+import { RenderLayer } from "../dinkum/core/render-layer";
+import { Color } from "../dinkum/graphics/color";
 
 const SPEED = 0.25;
 
@@ -42,8 +43,8 @@ export class Player {
     this.keepInBounds();
   }
 
-  public draw(renderer: RenderLayer2D) {
-    renderer.drawSprite(this.rect, [1, 1, 1, 1], this.sprite);
+  public draw(renderer: RenderLayer) {
+    renderer.drawSprite(this.rect, new Color(), this.sprite);
   }
 
   private keepInBounds() {

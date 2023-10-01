@@ -1,6 +1,6 @@
 import { Content } from "../dinkum/core/content";
 import { Rect } from "../dinkum/graphics/rect";
-import { SpriteRenderer } from "../dinkum/graphics/sprite/sprite-renderer";
+import { SpriteRenderer } from "../old_dinkum_stuff/sprite-renderer";
 
 const BACKGROUND_SCROLL_SPEED = 0.15;
 

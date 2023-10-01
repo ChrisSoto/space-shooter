@@ -1,5 +1,5 @@
 import { vec2 } from "gl-matrix";
-import { Camera3, CameraTransform } from "../camera/camera3";
+import { Camera3, CameraTransform } from "../camera/camera";
 import { InputManager } from "./input-manager";
 
 export class CameraInputManager {
@@ -7,10 +7,14 @@ export class CameraInputManager {
   sMousePos!: vec2;
   lMousePos!: vec2;
   mousePos!: vec2;
+  mouseClipPos!: vec2;
+  cSize!: vec2;
   constructor() {
     this.sMousePos = vec2.create();
     this.lMousePos = vec2.create();
     this.mousePos = vec2.create();
+    this.mouseClipPos = vec2.create();
+    this.cSize = vec2.create();
     this.sTransform = {
       x: 0,
       y: 0,
@@ -20,11 +24,17 @@ export class CameraInputManager {
   }
 
   initialize(canvas: HTMLCanvasElement, inputManager: InputManager, camera: Camera3) {
+    this.cSize[0] = canvas.width;
+    this.cSize[1] = canvas.height;
     window.addEventListener("keydown", e => inputManager.keydown[e.key] = true);
     window.addEventListener("keyup", e => inputManager.keydown[e.key] = false);
-    // canvas.addEventListener("wheel", e => {
-    //   this.getMousePosition(e, canvas)
-    // })
+
+    canvas.addEventListener("wheel", e => {
+      this.getMousePosition(e, canvas)
+      inputManager.wheel.backward = e.deltaY > 0;
+      inputManager.wheel.forward = e.deltaY < 0;
+    })
+
     canvas.addEventListener("mousedown", e => {
       inputManager.mouseDown[e.button] = true
       if (inputManager.mouseDown[1]) {
@@ -49,10 +59,6 @@ export class CameraInputManager {
   }
 
   public pan() {
-    console.log('trans:', this.sTransform.x, this.sTransform.y)
-    console.log('sMous:', this.sMousePos[0], this.sMousePos[1])
-    console.log('mouse:', this.mousePos[0], this.mousePos[1])
-    console.log('value:', this.sTransform.x - this.sMousePos[0] + this.mousePos[0], this.sTransform.y - this.sMousePos[1] + this.mousePos[1])
     return [
       this.sTransform.x - this.sMousePos[0] + this.mousePos[0],
       this.sTransform.y - this.sMousePos[1] + this.mousePos[1],
@@ -65,6 +71,22 @@ export class CameraInputManager {
     const scaledY = event.clientY - rect.top;
     const widthRatio = canvas.width / canvas.clientWidth;
     const heightRatio = canvas.height / canvas.clientHeight;
-    this.mousePos = [scaledX * widthRatio, scaledY * heightRatio];
+    const normalizedX = scaledX * widthRatio;
+    const normalizedY = scaledY * heightRatio;
+    this.mousePos = [normalizedX, normalizedY];
+  }
+
+  public getScreenFromClip(pos: number[]) {
+    return [
+      (this.cSize[0] * (pos[0] + 1)) / 2,
+      (this.cSize[1] * (pos[1] - 1)) / -2,
+    ]
+  }
+
+  public getClipFromScreen(pos: number[]) {
+    return [
+      (pos[0] / this.cSize[0]) * 2 - 1,
+      (pos[1] / this.cSize[1]) * -2 + 1,
+    ]
   }
 }
