@@ -1,8 +1,8 @@
 
-import { InputManager } from "./input-manager";
+import { InputManager } from "../input/input-manager";
 import Renderer2D from "./renderer";
 import { Camera3 } from "../camera/camera";
-import { CameraInputManager } from "./camera-input-manager";
+import { CameraInputManager } from "../input/camera-input-manager";
 
 
 export class Engine {

@@ -1,5 +1,5 @@
 import { vec2 } from "gl-matrix";
-import { Content } from "../dinkum/core/content";
+import { Content } from "../dinkum/render/core/content";
 import { Rect } from "../dinkum/graphics/rect";
 import { SpriteRenderer } from "../old_dinkum_stuff/sprite-renderer";
 import { Texture } from "../dinkum/graphics/sprite/texture";

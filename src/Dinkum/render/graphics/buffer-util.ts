@@ -6,7 +6,7 @@ export class BufferUtil {
    * @param data 
    * @returns {WebGLBuffer}
    */
-  public static createArrayBuffer(gl: WebGL2RenderingContext, data: Float32Array): WebGLBuffer {
+  public static createArrayBuffer(gl: WebGL2RenderingContext, data: Float32Array | Float64Array): WebGLBuffer {
     const buffer = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
@@ -14,7 +14,7 @@ export class BufferUtil {
     return buffer;
   }
 
-  public static createVertexArrayObject(gl: WebGL2RenderingContext, data: Float32Array) {
+  public static createVertexArrayObject(gl: WebGL2RenderingContext, data: Float32Array | Float64Array) {
     const buffer = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);

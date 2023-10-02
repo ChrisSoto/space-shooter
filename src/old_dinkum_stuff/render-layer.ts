@@ -2,7 +2,7 @@ import { vec2, vec3, vec4 } from "gl-matrix";
 import { Texture } from "../dinkum/graphics/sprite/texture";
 import Renderer from "./renderer";
 import { BufferUtil } from "../dinkum/graphics/buffer-util";
-import { BufferType } from "../dinkum/core/render-layer";
+import { BufferType } from "../dinkum/render/core/render-layer";
 
 
 

@@ -1,10 +1,10 @@
 import { vec2 } from "gl-matrix";
-import { Rect } from "../dinkum/graphics/rect";
-import { InputManager } from "../dinkum/core/input-manager";
-import { Content } from "../dinkum/core/content";
-import { Sprite } from "../dinkum/graphics/sprite/sprite";
-import { RenderLayer } from "../dinkum/core/render-layer";
-import { Color } from "../dinkum/graphics/color";
+import { InputManager } from "../dinkum/render/input/input-manager";
+import { Content } from "../dinkum/render/core/content";
+import { RenderLayer } from "../dinkum/render/core/render-layer";
+import { Rect } from "../dinkum/render/graphics/rect";
+import { Sprite } from "../dinkum/render/graphics/sprite/sprite";
+import { Color } from "../dinkum/render/graphics/color";
 
 const SPEED = 0.25;
 

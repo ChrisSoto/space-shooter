@@ -1,8 +1,7 @@
-import { mat4, vec2 } from "gl-matrix";
-import { InputManager } from "../core/input-manager";
-import { CameraInputManager } from "../core/camera-input-manager";
-import { MathUtil } from "../util/math";
-
+import { mat4 } from "gl-matrix";
+import { InputManager } from "../input/input-manager";
+import { CameraInputManager } from "../input/camera-input-manager";
+import { MathUtil } from "../../util/math";
 export interface CameraTransform {
   x: number,
   y: number,
@@ -58,6 +57,7 @@ export class Camera3 {
 
   public update(inputManager: InputManager, cameraInputManager: CameraInputManager) {
     this.updateInput(inputManager, cameraInputManager);
+    this.updateProjectionView();
     if (inputManager.wheel.forward || inputManager.wheel.backward) {
       const afterMatrix = mat4.translate(mat4.create(), this.projectionViewMatrix, [cameraInputManager.mousePos[0], cameraInputManager.mousePos[1], 0]);
       this.afterZoom = cameraInputManager.getScreenFromClip([afterMatrix[12], afterMatrix[13]]);
@@ -65,7 +65,6 @@ export class Camera3 {
       this.transform.y += this.beforeZoom[1] - this.afterZoom[1];
       inputManager.wheel.forward = false;
       inputManager.wheel.backward = false;
-      this.updateProjectionView();
     }
   }
 

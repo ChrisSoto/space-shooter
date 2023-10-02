@@ -1,5 +1,5 @@
-import { Content } from "../dinkum/core/content";
-import { Engine } from "../dinkum/core/engine";
+import { Content } from "../dinkum/render/core/content";
+import { Engine } from "../dinkum/render/core/engine";
 import { Editor } from "./editor";
 
 const engine = new Engine('canvas');
@@ -18,9 +18,9 @@ engine.initialize()
 
     // draw to buffer
     engine.onDraw = () => {
-      engine.spriteRenderer.begin();
+      engine.renderer.begin();
       // editor.draw(engine.camera);
-      engine.spriteRenderer.end();
+      engine.renderer.end();
     }
 
     engine.draw();

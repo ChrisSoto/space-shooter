@@ -50,6 +50,7 @@ export default class Renderer {
         this.layers[name].batchEnd()
       }
     }
+
   }
 
   public draw(): void {

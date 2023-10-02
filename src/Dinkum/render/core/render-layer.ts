@@ -22,13 +22,12 @@ export class RenderLayer {
   private FLOATS_PER_VERTEX = 7; // pos (x, y), color (r, g, b)
   private FLOATS_PER_SPRITE = 4 * this.FLOATS_PER_VERTEX; // I think there are 4 bytes per sprite vertex
   private INDICES_PER_SPRITE = 6; // two triangles
-  private totalSprites = 100;
+  private totalQuads = 1000;
 
   private v0: vec2 = vec2.create();
   private v1: vec2 = vec2.create();
   private v2: vec2 = vec2.create();
   private v3: vec2 = vec2.create();
-  private test: mat3 = mat3.create();
   constructor(private renderer: Renderer2D, public bufferType?: BufferType,) {
     this.setBufferType();
     // this.modelTransformMatrixLocation = this.renderer.gl.getUniformLocation(this.renderer.program, "uProjectionViewMatrix")!;
@@ -46,7 +45,7 @@ export class RenderLayer {
         this.drawSprite = this.drawSpriteNormal
         break;
       case BufferType.BATCHED:
-        this.data = new Float32Array((this.FLOATS_PER_SPRITE) * this.totalSprites);
+        this.data = new Float32Array((this.FLOATS_PER_SPRITE) * this.totalQuads);
         this.setLayerBuffers();
         this.drawQuad = this.drawQuadBatched
         this.drawSprite = this.drawSpriteBatched
@@ -74,15 +73,6 @@ export class RenderLayer {
   public drawSprite = (_rect: Rect, _color: Color, _sprite: Sprite) => { }
 
   private setRectToVertex(rect: Rect) {
-    // this.test[0] = rect.x; // x // a
-    // this.test[1] = rect.y; // y // a
-    // this.test[2] = rect.x + rect.width; // x // b
-    // this.test[3] = rect.y; // y // b
-    // this.test[4] = rect.x + rect.width; // x // c
-    // this.test[5] = rect.y + rect.height; // y // c
-    // this.test[6] = rect.x; // x //d
-    // this.test[7] = rect.y + rect.height; // y // d
-    // this.test[8] = 1;
 
     this.v0[0] = rect.x; // x //d
     this.v0[1] = rect.y + rect.height; // y // d
@@ -103,14 +93,11 @@ export class RenderLayer {
         this.origin[1] += rect.height * rect.origin[1];
       }
 
-      // mat3.rotate(this.test, this.test, rect.angle)
-
       vec2.rotate(this.v0, this.v0, this.origin, rect.angle);
       vec2.rotate(this.v1, this.v1, this.origin, rect.angle);
       vec2.rotate(this.v2, this.v2, this.origin, rect.angle);
       vec2.rotate(this.v3, this.v3, this.origin, rect.angle);
-      // console.log(this.v0, this.v1, this.v2, this.v3)
-      // if (rect.origin[0] > 0) {
+
       this.v0[0] += rect.x - this.origin[0];
       this.v0[1] += rect.y - this.origin[1];
       this.v1[0] += rect.x - this.origin[0];
@@ -119,7 +106,6 @@ export class RenderLayer {
       this.v2[1] += rect.y - this.origin[1];
       this.v3[0] += rect.x - this.origin[0];
       this.v3[1] += rect.y - this.origin[1];
-      // }
 
     }
   }
@@ -127,43 +113,6 @@ export class RenderLayer {
   private quadDataNormal(rect: Rect, color: Color) {
 
     this.setRectToVertex(rect);
-
-
-    // // top left
-    // this.data[0] = this.test[0] // x
-    // this.data[1] = this.test[1] // y
-    // this.data[2] = 0; // u
-    // this.data[3] = 1; // v
-    // this.data[4] = color.r; // r
-    // this.data[5] = color.g; // g
-    // this.data[6] = color.b; // b
-
-    // // top right
-    // this.data[7] = this.test[2] // y
-    // this.data[8] = this.test[3] // y
-    // this.data[9] = 1; // u
-    // this.data[10] = 1; // v
-    // this.data[11] = color.r; // r
-    // this.data[12] = color.g; // g
-    // this.data[13] = color.b; // b
-
-    // // bottom right
-    // this.data[14] = this.test[4] // y
-    // this.data[15] = this.test[5] // y
-    // this.data[16] = 1 // u
-    // this.data[17] = 0 // v
-    // this.data[18] = color.r; // r
-    // this.data[19] = color.g; // g
-    // this.data[20] = color.b; // b
-
-    // // bottom left
-    // this.data[21] = this.test[6] // x
-    // this.data[22] = this.test[7] // y
-    // this.data[23] = 0; // u
-    // this.data[24] = 0; // v
-    // this.data[25] = color.r; // r
-    // this.data[26] = color.g; // g
-    // this.data[27] = color.b; // b
 
     // bottom left
     this.data[0] = this.v0[0] // x
@@ -216,6 +165,7 @@ export class RenderLayer {
 
   private quadDataBatched(rect: Rect, color: Color) {
     let i = this.batchCount * this.FLOATS_PER_SPRITE;
+
     // bottom left
     this.data[0 + i] = rect.x; // x
     this.data[1 + i] = rect.y + rect.height; // y
@@ -362,9 +312,9 @@ export class RenderLayer {
 
   private setBatchedIndexBufferData() {
 
-    const data = new Uint16Array(this.totalSprites * this.INDICES_PER_SPRITE);
+    const data = new Uint16Array(this.totalQuads * this.INDICES_PER_SPRITE);
 
-    for (let i = 0; i < this.totalSprites; i++) {
+    for (let i = 0; i < this.totalQuads; i++) {
       // t1
       data[i * this.INDICES_PER_SPRITE + 0] = i * 4 + 0;
       data[i * this.INDICES_PER_SPRITE + 1] = i * 4 + 1;
@@ -404,7 +354,7 @@ export class RenderLayer {
   }
 
   public batchEnd() {
-    const batch = BufferUtil.resizeBuffer(this.totalSprites, this.batchCount);
+    const batch = BufferUtil.resizeBuffer(this.totalQuads, this.batchCount);
 
     this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
     this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE * batch.count, this.renderer.gl.UNSIGNED_SHORT, 0);
@@ -412,14 +362,15 @@ export class RenderLayer {
     // if batchCount is within 90% of the size of of maxSprites
     // increase the number of maxSprites by 15%
     if (batch.tooBig) {
-      this.totalSprites = Math.round(this.batchCount * 1.15);
+      this.totalQuads = Math.round(this.batchCount * 1.15);
 
-      this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalSprites);
+      this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalQuads);
       this.setBuffer();
       this.setVertexAttribPointers();
     }
 
     this.batchCount = 0;
+    this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalQuads);
   }
 
   private drawQuadShared(data: Float32Array) {
@@ -443,7 +394,7 @@ export class RenderLayer {
   // private async drawQuadBatchedPromise(): Promise<() => void> {
   //   return new Promise((resolve, reject) => {
   //     resolve(() => {
-  //       const batch = BufferUtil.resizeBuffer(this.totalSprites, this.batchCount);
+  //       const batch = BufferUtil.resizeBuffer(this.totalQuads, this.batchCount);
 
   //       this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
   //       this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE * batch.count, this.renderer.gl.UNSIGNED_SHORT, 0);
@@ -451,9 +402,9 @@ export class RenderLayer {
   //       // if batchCount is within 90% of the size of of maxSprites
   //       // increase the number of maxSprites by 15%
   //       if (batch.tooBig) {
-  //         this.totalSprites = Math.round(this.batchCount * 1.15);
+  //         this.totalQuads = Math.round(this.batchCount * 1.15);
 
-  //         this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalSprites);
+  //         this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalQuads);
   //         this.setBuffer();
   //         const stride = 2 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
   //         this.renderer.gl.vertexAttribPointer(this.renderer.positionLocation, 2, this.renderer.gl.FLOAT, false, stride, 0);
