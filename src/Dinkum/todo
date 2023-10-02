@@ -5,12 +5,17 @@
 [X] engine should have inputs like batching process
 [X] dynamically add quads to buffer
 [ ] dyanically remove quads from buffer
-[ ] re-integrate new renderer into game engine
+[X] re-integrate new renderer into game engine
 [ ] re-integrate texture rendering 
 [ ] camera - zoom, pan, rotate
+  [X] Zoom
+  [X] pan
+  [X] rotate
 [ ] job scheduling, Service Workers
 [ ] culling
 [ ] need the ability to draw lines, circles
+  [X] lines
+  [ ] circles
 
 [ ] rect needs methods for copy, global and local coordinates (top left)
 [ ] need a layout engine that works like div-image era web dev
@@ -18,6 +23,7 @@
 [ ] setup observable modal system for event notifications
 
 good video
+Bob Nystrom - Is There More to Game Architecture than ECS?
 https://www.youtube.com/watch?v=JxI3Eu5DPwE
 
 Ideas:
