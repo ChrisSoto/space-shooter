@@ -60,10 +60,9 @@ engine.initialize()
   })
 
 function createTiles(render: RenderLayer) {
-  const rows = 192
-  const cols = 108;
-
-  const size = 1;
+  const size = 10;
+  const rows = 1700 / size;
+  const cols = 970 / size;
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
