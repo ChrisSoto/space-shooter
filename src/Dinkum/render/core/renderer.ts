@@ -53,40 +53,7 @@ export default class Renderer {
 
   }
 
-  public draw(): void {
-    // const little = 50;
-    // const width = this.camera.width;
-    // const height = this.camera.height;
-    // get textures working
+  public draw(): void { }
 
-    // for (let i = 0; i < 1000; i++) {
-    //   this.layers['test'].drawQuad(
-    //     [Math.random() * width, Math.random() * height],
-    //     [little, little], [1, 1, 1, 1]);
-    // }
-
-    // this.layers['test'].drawQuad([this.canvas.width / 2, this.canvas.height / 2], [300, 300], [1, 1, 1, 1]);
-    // this.layers['test'].drawQuad([this.canvas.width - size, 0], [size, size], [0, 1, 0, 1]);
-    // this.layers['test'].drawQuad([0, this.canvas.height - size], [size, size], [0, 0, 1, 1]);
-    // this.layers['test'].drawQuad([this.canvas.width - size, this.canvas.height - size], [size, size], [1, 0, 1, 1]);
-  }
 }
-
-// const renderer = new Renderer2D("canvas");
-
-// renderer.layers['test'] = new RenderLayer(renderer, BufferType.BATCHED);
-// // renderer.layers['batch'] = new RenderLayer(renderer, BufferType.BATCHED);
-
-// let i = 0;
-
-// const draw = () => {
-//   renderer.begin();
-//   renderer.draw();
-//   renderer.end();
-//   i++;
-
-//   requestAnimationFrame(draw);
-// }
-
-// draw();
 

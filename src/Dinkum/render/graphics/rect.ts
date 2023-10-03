@@ -3,6 +3,7 @@ import { vec2 } from "gl-matrix";
 export class Rect {
   public angle = 0; // in radians
   public origin = vec2.create();
+  public cull = false;
   constructor(
     public x: number,
     public y: number,

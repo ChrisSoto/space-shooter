@@ -1,10 +1,11 @@
-import { mat3, vec2 } from "gl-matrix";
+import { vec2 } from "gl-matrix";
 import { BufferUtil } from "../graphics/buffer-util";
 import Renderer2D from "./renderer";
 import { Rect } from "../graphics/rect";
 import { Sprite } from "../graphics/sprite/sprite";
 import { Texture } from "../graphics/sprite/texture";
 import { Color } from "../graphics/color";
+import { WORLD } from "../../../space-shooter-example/main";
 
 export enum BufferType {
   NORMAL = 'NORMAL',
@@ -22,7 +23,7 @@ export class RenderLayer {
   private FLOATS_PER_VERTEX = 7; // pos (x, y), color (r, g, b)
   private FLOATS_PER_SPRITE = 4 * this.FLOATS_PER_VERTEX; // I think there are 4 bytes per sprite vertex
   private INDICES_PER_SPRITE = 6; // two triangles
-  private totalQuads = 1000;
+  private totalQuads = 10000;
 
   private v0: vec2 = vec2.create();
   private v1: vec2 = vec2.create();
@@ -163,7 +164,12 @@ export class RenderLayer {
     this.drawQuadNormal(rect, color);
   }
 
+  private cull(rect: Rect) {
+
+  }
+
   private quadDataBatched(rect: Rect, color: Color) {
+    // if (this.cull(rect)) return;
     let i = this.batchCount * this.FLOATS_PER_SPRITE;
 
     // bottom left
@@ -201,6 +207,12 @@ export class RenderLayer {
     this.data[25 + i] = color.r; // r
     this.data[26 + i] = color.g; // g
     this.data[27 + i] = color.b; // b
+
+    this.batchCount++;
+
+    if (this.batchCount >= this.totalQuads) {
+      this.batchEnd();
+    }
   }
 
   private spriteDataNormal(rect: Rect, color: Color, sprite: Sprite) {
@@ -339,7 +351,7 @@ export class RenderLayer {
 
   private drawQuadBatched(rect: Rect, color: Color) {
     this.quadDataBatched(rect, color);
-    this.batchCount++;
+
   }
 
   private drawSpriteNormal(rect: Rect, color: Color, sprite: Sprite) {
@@ -354,38 +366,44 @@ export class RenderLayer {
   }
 
   public batchEnd() {
-    const batch = BufferUtil.resizeBuffer(this.totalQuads, this.batchCount);
-
     this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
-    this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE * batch.count, this.renderer.gl.UNSIGNED_SHORT, 0);
-
-    // if batchCount is within 90% of the size of of maxSprites
-    // increase the number of maxSprites by 15%
-    if (batch.tooBig) {
-      this.totalQuads = Math.round(this.batchCount * 1.15);
-
-      this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalQuads);
-      this.setBuffer();
-      this.setVertexAttribPointers();
-    }
-
+    this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE * this.batchCount, this.renderer.gl.UNSIGNED_SHORT, 0);
     this.batchCount = 0;
-    this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalQuads);
   }
 
-  private drawQuadShared(data: Float32Array) {
-    // access data stored in renderer
+  // public batchEnd() {
+  //   const batch = BufferUtil.resizeBuffer(this.totalQuads, this.batchCount);
 
-  }
+  //   this.renderer.gl.bufferSubData(this.renderer.gl.ARRAY_BUFFER, 0, this.data);
+  //   this.renderer.gl.drawElements(this.renderer.gl.TRIANGLES, this.INDICES_PER_SPRITE * batch.count, this.renderer.gl.UNSIGNED_SHORT, 0);
 
-  private drawQuadInstanced(data: Float32Array) {
-    // not sure
+  //   // if batchCount is within 90% of the size of of maxSprites
+  //   // increase the number of maxSprites by 15%
+  //   if (batch.tooBig) {
+  //     this.totalQuads = Math.round(this.batchCount * 1.15);
 
-  }
+  //     this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalQuads);
+  //     this.setBuffer();
+  //     this.setVertexAttribPointers();
+  //   }
 
-  private setupBatchedRendering() {
+  //   this.batchCount = 0;
+  //   this.data = new Float32Array(this.FLOATS_PER_SPRITE * this.totalQuads);
+  // }
 
-  }
+  // private drawQuadShared(data: Float32Array) {
+  //   // access data stored in renderer
+
+  // }
+
+  // private drawQuadInstanced(data: Float32Array) {
+  //   // not sure
+
+  // }
+
+  // private setupBatchedRendering() {
+
+  // }
 
   private setupInstancedRendering() {
 

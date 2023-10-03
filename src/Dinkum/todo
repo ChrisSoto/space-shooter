@@ -17,6 +17,9 @@
   [X] lines
   [ ] circles
 
+# performance experiments
+[ ] see if skipping the build process of the buffer data saves fps
+
 [ ] rect needs methods for copy, global and local coordinates (top left)
 [ ] need a layout engine that works like div-image era web dev
 [ ] maybe use texture loading as a setup screen
